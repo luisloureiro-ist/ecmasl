@@ -27,4 +27,4 @@ let rec str (e : t) : string = match e with
   | Var x               -> x
   | UnOpt (op, e)       -> (str_of_unopt op) ^ (str e)
   | BinOpt (op, e1, e2) -> (str e1) ^ " " ^ (str_of_binopt op) ^ " " ^ (str e2)
-  | Call (f, es)        -> f ^ " (" ^ List.fold_left (fun acc prev -> acc ^ str prev) "" es ^ ")"
+  | Call (f, es)        -> f ^ " (" ^ List.fold_left (fun acc ele -> acc ^ str ele) "" es ^ ")"
