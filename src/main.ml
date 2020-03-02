@@ -18,12 +18,15 @@ let main_expr (prog : Prog.t) (sto : Store.t) : unit =
   (* x + 2 *)
   and ex = BinOpt (Plus, Var "x", Val (Int 2))
   (* y - 3 *)
-  and ey = BinOpt (Minus, Var "y", Val (Flt 3.)) in
+  and ey = BinOpt (Minus, Var "y", Val (Flt 3.))
+  (* 4 + fact(5) *)
+  and ef = BinOpt (Plus, Val (Int 4), Call ("fact", [Val (Int 5)])) in
   print_endline "Expressions:\n---------------------";
   printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr prog sto e1));
   printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr prog sto e2));
   printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (eval_expr prog sto ex));
   printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (eval_expr prog sto ey));
+  printf "ef => %s = %s;\n" (Expr.str ef) (Val.str (eval_expr prog sto ef));
   print_endline "---------------------\n"
 
 
@@ -46,16 +49,27 @@ let main_stmt (prog : Prog.t) (sto : Store.t) : unit =
   print_endline "------------------"
 
 
-let main_factorial (prog : Prog.t) (sto : Store.t) : unit =
-  let s1 = Assign ("y", Val (Flt 1.)) and
-  s2 = Assign ("x", Val (Flt 4.)) and
+let factorial_stmt (num : string) : Stmt.t =
+  let s1 = Assign ("y", Val (Int 1)) and
+  s2 = Assign ("x", Var num) and
   s3 = Assign ("y", BinOpt(Times, Var "y", Var "x")) and
-  s4 = Assign ("x", BinOpt(Minus, Var "x", Val (Flt 1.))) in
+  s4 = Assign ("x", BinOpt(Minus, Var "x", Val (Int 1))) and
+  s5 = Return (Var "y") in
   let s12 = Seq(s1, s2) and
     s34 = Seq (s3, s4) in
-  let swhile = While(BinOpt(Gt, Var "x", Val (Flt 0.)), s34) in
-  let s = Seq(s12, swhile) in
-  ignore (eval_stmt prog sto s); print_endline "Factorial of 4 evaluated!"
+  let swhile = While (BinOpt(Gt, Var "x", Val (Int 0)), s34) in
+  let s = Seq (s12, Seq (swhile, s5)) in
+  s
+
+
+let main_test_functions (prog : Prog.t) (sto : Store.t) (var_name : string) : unit =
+  let s_fact = factorial_stmt (var_name) in
+  let result =
+    let eval = eval_stmt prog sto s_fact in match eval with
+      None -> invalid_arg "Wasn't suppose to throw ..."
+    | Some v -> Val.str v in
+  printf "Factorial of %s is: %s\n" (Val.str(Store.get_var sto var_name)) result;
+  print_store sto
 
 
 let main_parse_files (prog : Prog.t) : unit =
@@ -80,17 +94,29 @@ let main_parse_files (prog : Prog.t) : unit =
 
 ;;
 Store.(
-  let local_store = create_store [("x", Flt 2.); ("y", Flt 3.)] and
-  empty_store = create_store [] and
-  main = Hashtbl.create 511 in
+  let main = Hashtbl.create 511 and
+  fact_func = Func.({ name = "fact"; params = ["num"]; body = factorial_stmt ("num") }) in
+  Hashtbl.add main "fact" fact_func;
+  print_endline "Program functions:\n--------------------";
+  print_endline (Prog.to_string main);
 
+  print_endline "\n=========================";
+  print_endline "=========================";
+
+  let local_store = create_store [("x", Int 2); ("y", Flt 3.)] in
   print_store local_store;
   main_expr main local_store;
   main_stmt main local_store;
   print_store local_store;
 
-  main_factorial main empty_store;
-  print_store empty_store;
+  print_endline "=========================";
+  print_endline "=========================\n";
+
+  let fact_store = create_store [("z", Int 4)] in
+  main_test_functions main fact_store "z";
+
+  print_endline "=========================";
+  print_endline "=========================";
 
   main_parse_files main
 )
