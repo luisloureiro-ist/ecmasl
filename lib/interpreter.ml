@@ -18,7 +18,7 @@ let rec eval_expr (prog : Prog.t) (sto : Store.t) (e : Expr.t) : Val.t = match e
   | UnOpt (uop, e)       -> let v = eval_expr prog sto e in eval_unopt_expr uop v
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog sto e1 and v2 = eval_expr prog sto e2 in eval_binopt_expr bop v1 v2
   | Call (f, es)         -> (let vs = List.map (eval_expr prog sto) es in
-                             let func = Prog.getFunc prog f in
+                             let func = Prog.get_func prog f in
                              let sto = Func.create_store func vs in
                              let s = Func.get_body func in
                              let v0 = eval_stmt prog sto s in
