@@ -41,28 +41,29 @@ let newline = '\r'|'\n'|"\r\n"
 *)
 rule read =
   parse
-  | white   { read lexbuf }
-  | newline { read lexbuf }
-  | ":="    { DEFEQ }
-  | ';'     { SEMICOLON }
-  | '+'     { PLUS }
-  | '-'     { MINUS }
-  | '*'     { TIMES }
-  | '/'     { DIVIDE }
-  | '>'     { GT }
-  | '<'     { LT }
-  | ">="    { EGT }
-  | "<="    { ELT }
-  | '('     { LPAREN }
-  | ')'     { RPAREN }
-  | '{'     { LBRACE }
-  | '}'     { RBRACE }
-  | "if"    { IF }
-  | "else"  { ELSE }
-  | "while" { WHILE }
-  | int     { INT (int_of_string (Lexing.lexeme lexbuf)) }
-  | float   { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
-  | bool    { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
-  | string  { STRING (Lexing.lexeme lexbuf) }
-  | var     { VAR (Lexing.lexeme lexbuf) }
-  | eof     { EOF }
+  | white    { read lexbuf }
+  | newline  { read lexbuf }
+  | ":="     { DEFEQ }
+  | ';'      { SEMICOLON }
+  | '+'      { PLUS }
+  | '-'      { MINUS }
+  | '*'      { TIMES }
+  | '/'      { DIVIDE }
+  | '>'      { GT }
+  | '<'      { LT }
+  | ">="     { EGT }
+  | "<="     { ELT }
+  | '('      { LPAREN }
+  | ')'      { RPAREN }
+  | '{'      { LBRACE }
+  | '}'      { RBRACE }
+  | "if"     { IF }
+  | "else"   { ELSE }
+  | "while"  { WHILE }
+  | "return" { RETURN }
+  | int      { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
+  | bool     { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
+  | string   { STRING (Lexing.lexeme lexbuf) }
+  | var      { VAR (Lexing.lexeme lexbuf) }
+  | eof      { EOF }

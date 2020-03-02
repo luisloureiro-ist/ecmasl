@@ -9,6 +9,7 @@
 %token DEFEQ
 %token WHILE
 %token IF ELSE
+%token RETURN
 %token LPAREN RPAREN
 %token LBRACE RBRACE
 %token SEMICOLON
@@ -56,7 +57,7 @@ prog_stmt_target:
     to produce values that are attached to the nonterminal in the rule.
 *)
 
-(* v ::= f | i | b *)
+(* v ::= f | i | b | s *)
 val_target:
   | f = FLOAT;
     { Val.Flt f }
@@ -80,7 +81,7 @@ expr_target:
   | LPAREN; e = expr_target; RPAREN;
     { e }
 
-(* s ::= skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } *)
+(* s ::= skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e *)
 stmt_target:
   | SKIP;
     { Stmt.Skip }
@@ -92,6 +93,8 @@ stmt_target:
     { Stmt.If (e, s1, s2)}
   | WHILE; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
     { Stmt.While (e, s) }
+  | RETURN; e = expr_target;
+    { Stmt.Return e }
 
 op_target:
   | MINUS  { Expr.Minus }
