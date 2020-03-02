@@ -68,7 +68,7 @@ val_target:
   | s = STRING;
     { Val.Str s }
 
-(* e ::= v | x | -e | e+e | (e) *)
+(* e ::= v | x | -e | e+e | f(e) | (e) *)
 expr_target:
   | v = val_target;
     { Expr.Val v }
@@ -78,6 +78,8 @@ expr_target:
     { Expr.UnOpt (Expr.Neg, e) } %prec unopt_prec
   | e1 = expr_target; bop = op_target; e2 = expr_target;
     { Expr.BinOpt (bop, e1, e2) } %prec binopt_prec
+  | v = VAR; LPAREN; e = expr_target; RPAREN;
+    { Expr.Call (v, [e]) }
   | LPAREN; e = expr_target; RPAREN;
     { e }
 
