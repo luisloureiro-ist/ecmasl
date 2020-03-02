@@ -1,7 +1,7 @@
 type t = (string, Val.t) Hashtbl.t
 
 let create_store (varvals : (string * Val.t) list) : t =
-  let sto : t = Hashtbl.create 511 in
+  let sto = Hashtbl.create 511 in
   List.iter (fun (x, v) -> Hashtbl.add sto x v) varvals;
   sto
 

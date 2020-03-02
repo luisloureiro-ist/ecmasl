@@ -2,6 +2,7 @@ open Printf
 open Expr
 open Stmt
 open Val
+open Interpreter
 
 let print_store (sto : Store.t) =
   print_endline "\nStore contents:\n--------------";
@@ -19,10 +20,10 @@ let main_expr (sto : Store.t) =
   (* y - 3 *)
   and ey : Expr.t = BinOpt (Minus, Var "y", Val (Flt 3.)) in
   print_endline "Expressions:\n---------------------";
-  printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (Expr.eval sto e1));
-  printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (Expr.eval sto e2));
-  printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (Expr.eval sto ex));
-  printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (Expr.eval sto ey));
+  printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr Prog.main sto e1));
+  printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr Prog.main sto e2));
+  printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (eval_expr Prog.main sto ex));
+  printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (eval_expr Prog.main sto ey));
   print_endline "---------------------\n"
 
 
@@ -38,10 +39,10 @@ let main_stmt (sto : Store.t) =
   and s5 : Stmt.t = While (BinOpt (Egt, Var "x", Val (Flt 0.)), Assign ("x", BinOpt (Minus, Var "x", Val (Flt 1.)))) in
   print_endline "Statements:\n------------------";
   printf "s1 => %s\n" (Stmt.str s1);
-  printf "s2 => %s\n" (Stmt.str s2); (Stmt.eval sto s2);
-  printf "s3 => %s\n" (Stmt.str s3); (Stmt.eval sto s3);
-  printf "s4 => %s\n" (Stmt.str s4); (Stmt.eval sto s4);
-  printf "s5 => %s\n" (Stmt.str s5); (Stmt.eval sto s5);
+  printf "s2 => %s\n" (Stmt.str s2); ignore (eval_stmt Prog.main sto s2);
+  printf "s3 => %s\n" (Stmt.str s3); ignore (eval_stmt Prog.main sto s3);
+  printf "s4 => %s\n" (Stmt.str s4); ignore (eval_stmt Prog.main sto s4);
+  printf "s5 => %s\n" (Stmt.str s5); ignore (eval_stmt Prog.main sto s5);
   print_endline "------------------"
 
 
@@ -54,7 +55,7 @@ let main_factorial (sto : Store.t) : unit =
     s34 = Seq (s3, s4) in
   let swhile = While(BinOpt(Gt, Var "x", Val (Flt 0.)), s34) in
   let s = Seq(s12, swhile) in
-  Stmt.eval sto s; print_endline "Factorial of 4 evaluated!"
+  ignore (eval_stmt Prog.main sto s); print_endline "Factorial of 4 evaluated!"
 
 
 let main_parse_files () : unit =
@@ -65,7 +66,7 @@ let main_parse_files () : unit =
       s = parse_stmt stmt_contents in
     Store.(
       let store = create_store [] in
-      Stmt.eval store s;
+      ignore (eval_stmt Prog.main store s);
       print_endline "\nParsed expression file:\n---------------";
       print_endline (Expr.str e);
       print_endline "---------------";
