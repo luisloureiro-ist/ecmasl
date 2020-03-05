@@ -49,9 +49,9 @@ let main_stmt (prog : Prog.t) (sto : Store.t) : unit =
   print_endline "------------------"
 
 
-let factorial_stmt (num : string) : Stmt.t =
+let factorial_stmt (param_name : string) : Stmt.t =
   let s1 = Assign ("y", Val (Int 1)) and
-  s2 = Assign ("x", Var num) and
+  s2 = Assign ("x", Var param_name) and
   s3 = Assign ("y", BinOpt(Times, Var "y", Var "x")) and
   s4 = Assign ("x", BinOpt(Minus, Var "x", Val (Int 1))) and
   s5 = Return (Var "y") in
@@ -62,13 +62,46 @@ let factorial_stmt (num : string) : Stmt.t =
   s
 
 
-let main_test_functions (prog : Prog.t) (sto : Store.t) (var_name : string) : unit =
-  let s_fact = factorial_stmt (var_name) in
+let fibonacci_stmt (param_name : string) : Stmt.t =
+  let s1 = Assign ("a", Val (Int 1)) and
+  s2 = Assign ("b", Val (Int 0)) and
+  s3 = Assign ("temp", Val (Int 0)) and
+  (* temp = a *)
+  s4 = Assign ("temp", Var "a") and
+  (* a = a + b *)
+  s5 = Assign ("a", BinOpt (Plus, Var "a", Var "b")) and
+  (* b = temp *)
+  s6 = Assign ("b", Var "temp") and
+  (* num = num - 1 *)
+  s7 = Assign (param_name, BinOpt (Minus, Var param_name, Val (Int 1))) and
+  (* return b *)
+  s8 = Return (Var "b") in
+  let s123 = Seq (s1, Seq(s2, s3)) and
+    s4567 = Seq (s4, Seq (s5, Seq (s6, s7))) in
+  let swhile = While (BinOpt (Egt, Var param_name, Val (Int 1)), s4567) in
+  let s = Seq (s123, Seq (swhile, s8)) in
+  s
+
+
+let main_test_functions (prog : Prog.t) (sto : Store.t) : unit =
+  let var_name = "z" in
+  let s_fact = factorial_stmt var_name in
   let result =
     let eval = eval_stmt prog sto s_fact in match eval with
       None -> invalid_arg "Wasn't suppose to throw ..."
     | Some v -> Val.str v in
   printf "Factorial of %s is: %s\n" (Val.str(Store.get_var sto var_name)) result;
+
+  print_endline "------------------------";
+
+  let term = Store.get_var sto "term" in
+  let s_fibo = fibonacci_stmt "term" in
+  let result =
+    let eval = eval_stmt prog sto s_fibo in match eval with
+      None -> invalid_arg "Wasn't suppose to throw ..."
+    | Some v -> Val.str v in
+  printf "The term %s of the Fibonacci sequence is: %s\n" (Val.str term) result;
+
   print_store sto
 
 
@@ -95,9 +128,11 @@ let main_parse_files (prog : Prog.t) : unit =
 ;;
 Store.(
   let main = Hashtbl.create 511 and
-  fact_func = Func.({ name = "fact"; params = ["num"]; body = factorial_stmt ("num") }) in
+  fact_func = Func.({ name = "fact"; params = ["num"]; body = factorial_stmt "num" }) and
+  fibo_func = Func.({ name = "fibonacci"; params = ["term"]; body = fibonacci_stmt "term" }) in
   Hashtbl.add main "fact" fact_func;
-  print_endline "Program functions:\n--------------------";
+  Hashtbl.add main "fibonacci" fibo_func;
+  print_endline "\nProgram functions:\n--------------------";
   print_endline (Prog.to_string main);
 
   print_endline "\n=========================";
@@ -112,8 +147,8 @@ Store.(
   print_endline "=========================";
   print_endline "=========================\n";
 
-  let fact_store = create_store [("z", Int 4)] in
-  main_test_functions main fact_store "z";
+  let functions_store = create_store [("z", Int 4); ("term", Int 6)] in
+  main_test_functions main functions_store;
 
   print_endline "=========================";
   print_endline "=========================";
