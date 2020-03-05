@@ -1,0 +1,16 @@
+function main () {
+  return (fibonacci (6))
+};
+
+function fibonacci (n) {
+  a := 1; b := 1; temp := 0;
+
+  while (n > 1) {
+    temp := a;
+    a := a + b;
+    b := temp;
+    n := n - 1
+  };
+
+  return a
+}

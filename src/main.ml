@@ -125,6 +125,26 @@ let main_parse_files (prog : Prog.t) : unit =
   )
 
 
+let file = ref ""
+let arguments () =
+  let usage_msg = "Usage: -file <path>" in
+  Arg.parse
+    [
+      "-file", Arg.String(fun f -> file := f), "file to run"
+    ]
+    (fun s -> Format.eprintf "WARNING: Ignored argument: %s.@." s)
+    usage_msg
+
+
+let main_parse_prog () : unit =
+  arguments ();
+  Parsing_utils.(
+    let prog_contents = load_file !file in
+    let p = parse_prog prog_contents in
+    let (v, _) = eval_prog p in
+    print_endline (Val.str v)
+  )
+
 ;;
 Store.(
   let main = Hashtbl.create 511 and
@@ -153,5 +173,7 @@ Store.(
   print_endline "=========================";
   print_endline "=========================";
 
-  main_parse_files main
+  main_parse_files main;
+
+  main_parse_prog ()
 )

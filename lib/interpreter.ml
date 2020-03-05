@@ -39,3 +39,7 @@ and eval_proc (prog : Prog.t) (pname : string) (args : Val.t list) : Val.t * Sto
   match v0 with
     None -> raise (Invalid_argument "Exception in Interpreter.eval_proc: statement didn't return")
   | Some v -> (v, sto)
+
+
+let eval_prog (prog : Prog.t) : Val.t * Store.t =
+  eval_proc prog "main" []
