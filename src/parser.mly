@@ -10,9 +10,10 @@
 %token WHILE
 %token IF ELSE
 %token RETURN
+%token FUNCTION
 %token LPAREN RPAREN
 %token LBRACE RBRACE
-%token SEMICOLON
+%token COMMA SEMICOLON
 %token <float> FLOAT
 %token <int> INT
 %token <bool> BOOLEAN
@@ -49,6 +50,10 @@ prog_expr_target:
 
 prog_stmt_target:
   | s = stmt_target; EOF; { s }
+
+proc_target:
+  | FUNCTION; f = VAR; LPAREN; vars = separated_list (COMMA, VAR); RPAREN; LBRACE; s = stmt_target; RBRACE
+   { Func.create_func f vars s }
 
 (*
   The pipes separate the individual productions, and the curly braces contain a semantic action:

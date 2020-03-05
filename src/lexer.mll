@@ -45,6 +45,7 @@ rule read =
   | newline  { read lexbuf }
   | ":="     { DEFEQ }
   | ';'      { SEMICOLON }
+  | ','      { COMMA }
   | '+'      { PLUS }
   | '-'      { MINUS }
   | '*'      { TIMES }
@@ -61,6 +62,7 @@ rule read =
   | "else"   { ELSE }
   | "while"  { WHILE }
   | "return" { RETURN }
+  | "function" { FUNCTION }
   | int      { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | float    { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | bool     { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
