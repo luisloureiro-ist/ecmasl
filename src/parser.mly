@@ -32,8 +32,9 @@
 
 %type <Expr.t> prog_expr_target
 %type <Stmt.t> prog_stmt_target
+%type <Prog.t> prog_target
 
-%start prog_expr_target prog_stmt_target
+%start prog_target prog_expr_target prog_stmt_target
 %% (* separator line *)
 (* END first section - declarations *)
 
@@ -50,6 +51,10 @@ prog_expr_target:
 
 prog_stmt_target:
   | s = stmt_target; EOF; { s }
+
+prog_target:
+  | funcs = separated_list (SEMICOLON, proc_target); EOF;
+   { Prog.create_prog funcs }
 
 proc_target:
   | FUNCTION; f = VAR; LPAREN; vars = separated_list (COMMA, VAR); RPAREN; LBRACE; s = stmt_target; RBRACE
