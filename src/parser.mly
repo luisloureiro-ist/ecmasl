@@ -24,6 +24,7 @@
 %left GT LT EGT ELT
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left SEMICOLON
 
 %nonassoc binopt_prec
 %nonassoc unopt_prec
