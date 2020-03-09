@@ -146,33 +146,35 @@ let main_parse_prog () : unit =
   )
 
 ;;
-Store.(
-  let main_prog = Prog.create_prog ([]) and
+let main_prog = Prog.create_prog ([]) and
+  main_heap = Heap.create () and
   fact_func = Func.create_func "fact" ["num"] (factorial_stmt "num") and
   fibo_func = Func.create_func "fibonacci" ["term"] (fibonacci_stmt "term") in
-  Hashtbl.add main_prog "fact" fact_func;
-  Hashtbl.add main_prog "fibonacci" fibo_func;
-  print_endline "\nProgram functions:\n--------------------";
-  print_endline (Prog.str main_prog);
+Hashtbl.add main_prog "fact" fact_func;
+Hashtbl.add main_prog "fibonacci" fibo_func;
+print_endline "\nProgram functions:\n--------------------";
+print_endline (Prog.str main_prog);
 
-  print_endline "\n=========================";
-  print_endline "=========================";
+print_endline "\n=========================";
+print_endline "=========================";
 
-  let local_store = create_store [("x", Int 2); ("y", Flt 3.)] in
-  print_store local_store;
-  main_expr main_prog local_store;
-  main_stmt main_prog local_store;
-  print_store local_store;
+let local_store = Store.create_store [("x", Int 2); ("y", Flt 3.)] and
+  local_heap = Heap.create () in
+print_store local_store;
+main_expr main_prog local_heap local_store;
+main_stmt main_prog local_heap local_store;
+print_store local_store;
 
-  print_endline "=========================";
-  print_endline "=========================\n";
+print_endline "=========================";
+print_endline "=========================\n";
 
-  main_test_functions main_prog functions_store;
+let functions_store = Store.create_store [("z", Int 4); ("term", Int 6)] and
+  functions_heap = Heap.create () in
+main_test_functions main_prog functions_heap functions_store;
 
-  print_endline "=========================";
-  print_endline "=========================";
+print_endline "=========================";
+print_endline "=========================";
 
-  main_parse_files main_prog;
+main_parse_files main_prog main_heap;
 
-  main_parse_prog ()
-)
+main_parse_prog ()
