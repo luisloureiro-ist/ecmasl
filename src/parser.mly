@@ -32,9 +32,10 @@
 
 %type <Expr.t> prog_expr_target
 %type <Stmt.t> prog_stmt_target
+%type <Heap.t> heap_target
 %type <Prog.t> prog_target
 
-%start prog_target prog_expr_target prog_stmt_target
+%start prog_target heap_target prog_expr_target prog_stmt_target
 %% (* separator line *)
 (* END first section - declarations *)
 
@@ -51,6 +52,10 @@ prog_expr_target:
 
 prog_stmt_target:
   | s = stmt_target; EOF; { s }
+
+heap_target:
+  | LBRACE; RBRACE; EOF
+    { Heap.create () }
 
 prog_target:
   | funcs = separated_list (SEMICOLON, proc_target); EOF;
