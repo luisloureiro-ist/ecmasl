@@ -144,10 +144,11 @@ let main_parse_prog () : unit =
   )
 
 ;;
-let main_prog = Prog.create ([]) and
-  main_heap = Heap.create () and
+let main_heap = Heap.create () and
+  main_func = Func.create "main" [] (Return (Call ("main", []))) and
   fact_func = Func.create "fact" ["num"] (factorial_stmt "num") and
   fibo_func = Func.create "fibonacci" ["term"] (fibonacci_stmt "term") in
+let main_prog = Prog.create ([main_func]) in
 Hashtbl.add main_prog "fact" fact_func;
 Hashtbl.add main_prog "fibonacci" fibo_func;
 print_endline "\nProgram functions:\n--------------------";
