@@ -84,10 +84,10 @@ val_target:
   | s = STRING;
     { Val.Str s }
 
-(* e ::= {} | v | x | -e | e+e | f(e) | (e) *)
+(* e ::= {} | {f:e} | e.f | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
-  | o = LBRACE; RBRACE;
-    { Expr.NewObj () }
+  | LBRACE; RBRACE;
+    { Expr.NewObj }
   | v = val_target;
     { Expr.Val v }
   | v = VAR;
