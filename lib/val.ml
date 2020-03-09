@@ -3,12 +3,14 @@ type t =
   | Int  of int
   | Bool of bool
   | Str  of string
+  | Loc  of Loc.t
 
 let neg (v : t) : t = match v with
   | Flt v  -> Flt (-.v)
   | Int v  -> Int (-v)
   | Bool v -> Bool (v = false)
   | Str v  -> raise (Invalid_argument "Exception in Val.neg: this operation doesn't apply to string type argument")
+  | Loc v  -> raise (Invalid_argument "Exception in Val.neg: this operation doesn't apply to Loc type argument")
 
 let plus (v1, v2 : t * t) : t = match v1, v2 with
   | (Flt v1, Int v2) -> Flt (v1 +. float_of_int v2)
@@ -57,3 +59,4 @@ let str (v : t) : string = match v with
   | Int v  -> string_of_int v
   | Bool v -> string_of_bool v
   | Str v  -> "\"" ^ v ^ "\""
+  | Loc v  -> Loc.str v
