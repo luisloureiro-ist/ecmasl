@@ -124,11 +124,14 @@ let main_parse_files (prog : Prog.t) (heap : Heap.t) : unit =
 
 
 let file = ref ""
+let heap_file = ref ""
+
 let arguments () =
-  let usage_msg = "Usage: -file <path>" in
+  let usage_msg = "Usage: -prog <path> -heap <path>" in
   Arg.parse
     [
-      "-file", Arg.String(fun f -> file := f), "file to run"
+      "-prog", Arg.String(fun f -> file := f), "File with the program to run";
+      "-heap", Arg.String(fun f -> heap_file := f), "File with the heap. Program runs against this heap."
     ]
     (fun s -> Format.eprintf "WARNING: Ignored argument: %s.@." s)
     usage_msg
@@ -138,7 +141,7 @@ let main_parse_prog () : unit =
   arguments ();
   Parsing_utils.(
     let prog_contents = load_file !file and
-    heap_contents = load_file "heap.json" in
+    heap_contents = load_file !heap_file in
     let prog = parse_prog prog_contents and
       heap = parse_heap heap_contents in
     let (v, _) = eval_prog prog heap in
