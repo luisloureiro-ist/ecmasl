@@ -10,7 +10,7 @@ let print_store (sto : Store.t) : unit =
   print_endline "--------------\n"
 
 
-let main_expr (prog : Prog.t) (sto : Store.t) : unit =
+let main_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   (* 3.5 * 2 *)
   let e1 = BinOpt (Times, Val (Flt 3.5), Val (Int 2))
   (* 7 *)
@@ -22,15 +22,15 @@ let main_expr (prog : Prog.t) (sto : Store.t) : unit =
   (* 4 + fact(5) *)
   and ef = BinOpt (Plus, Val (Int 4), Call ("fact", [Val (Int 5)])) in
   print_endline "Expressions:\n---------------------";
-  printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr prog sto e1));
-  printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr prog sto e2));
-  printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (eval_expr prog sto ex));
-  printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (eval_expr prog sto ey));
-  printf "ef => %s = %s;\n" (Expr.str ef) (Val.str (eval_expr prog sto ef));
+  printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr prog heap sto e1));
+  printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr prog heap sto e2));
+  printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (eval_expr prog heap sto ex));
+  printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (eval_expr prog heap sto ey));
+  printf "ef => %s = %s;\n" (Expr.str ef) (Val.str (eval_expr prog heap sto ef));
   print_endline "---------------------\n"
 
 
-let main_stmt (prog : Prog.t) (sto : Store.t) : unit =
+let main_stmt (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   let s1 = Skip
   (* x = 3.5 *)
   and s2 = Assign ("x", Val (Flt 3.5))
@@ -42,10 +42,10 @@ let main_stmt (prog : Prog.t) (sto : Store.t) : unit =
   and s5 = While (BinOpt (Egt, Var "x", Val (Flt 0.)), Assign ("x", BinOpt (Minus, Var "x", Val (Flt 1.)))) in
   print_endline "Statements:\n------------------";
   printf "s1 => %s\n" (Stmt.str s1);
-  printf "s2 => %s\n" (Stmt.str s2); ignore (eval_stmt prog sto s2);
-  printf "s3 => %s\n" (Stmt.str s3); ignore (eval_stmt prog sto s3);
-  printf "s4 => %s\n" (Stmt.str s4); ignore (eval_stmt prog sto s4);
-  printf "s5 => %s\n" (Stmt.str s5); ignore (eval_stmt prog sto s5);
+  printf "s2 => %s\n" (Stmt.str s2); ignore (eval_stmt prog heap sto s2);
+  printf "s3 => %s\n" (Stmt.str s3); ignore (eval_stmt prog heap sto s3);
+  printf "s4 => %s\n" (Stmt.str s4); ignore (eval_stmt prog heap sto s4);
+  printf "s5 => %s\n" (Stmt.str s5); ignore (eval_stmt prog heap sto s5);
   print_endline "------------------"
 
 
@@ -83,11 +83,11 @@ let fibonacci_stmt (param_name : string) : Stmt.t =
   s
 
 
-let main_test_functions (prog : Prog.t) (sto : Store.t) : unit =
+let main_test_functions (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   let var_name = "z" in
   let s_fact = factorial_stmt var_name in
   let result =
-    let eval = eval_stmt prog sto s_fact in match eval with
+    let eval = eval_stmt prog heap sto s_fact in match eval with
       None -> invalid_arg "Wasn't suppose to throw ..."
     | Some v -> Val.str v in
   printf "Factorial of %s is: %s\n" (Val.str(Store.get sto var_name)) result;
@@ -97,7 +97,7 @@ let main_test_functions (prog : Prog.t) (sto : Store.t) : unit =
   let term = Store.get sto "term" in
   let s_fibo = fibonacci_stmt "term" in
   let result =
-    let eval = eval_stmt prog sto s_fibo in match eval with
+    let eval = eval_stmt prog heap sto s_fibo in match eval with
       None -> invalid_arg "Wasn't suppose to throw ..."
     | Some v -> Val.str v in
   printf "The term %s of the Fibonacci sequence is: %s\n" (Val.str term) result;
@@ -105,14 +105,14 @@ let main_test_functions (prog : Prog.t) (sto : Store.t) : unit =
   print_store sto
 
 
-let main_parse_files (prog : Prog.t) : unit =
+let main_parse_files (prog : Prog.t) (heap : Heap.t) : unit =
   Parsing_utils.(
     let expr_contents = load_file "expr_test_file" and
     stmt_contents = load_file "stmt_test_file" in
     let e = parse_expr expr_contents and
       s = parse_stmt stmt_contents and
       store = Store.create [] in
-    ignore (eval_stmt prog store s);
+    ignore (eval_stmt prog heap store s);
     print_endline "\nParsed expression file:\n---------------";
     print_endline (Expr.str e);
     print_endline "---------------";
