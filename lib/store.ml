@@ -5,8 +5,8 @@ let create (varvals : (string * Val.t) list) : t =
   List.iter (fun (x, v) -> Hashtbl.add sto x v) varvals;
   sto
 
-let get_var (sto : t) (name : string) : Val.t = Hashtbl.find sto name
+let get (sto : t) (name : string) : Val.t = Hashtbl.find sto name
 
-let set_var (sto : t) (name : string) (value : Val.t) : unit = Hashtbl.replace sto name value
+let set (sto : t) (name : string) (value : Val.t) : unit = Hashtbl.replace sto name value
 
 let str (sto : t) : string = (Hashtbl.fold (fun n v ac -> (if ac <> "" then ac ^ ", " else ac) ^ (Printf.sprintf "%s: %s" n (Val.str v))) sto "{ ") ^ " }"

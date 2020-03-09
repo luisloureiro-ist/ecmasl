@@ -90,11 +90,11 @@ let main_test_functions (prog : Prog.t) (sto : Store.t) : unit =
     let eval = eval_stmt prog sto s_fact in match eval with
       None -> invalid_arg "Wasn't suppose to throw ..."
     | Some v -> Val.str v in
-  printf "Factorial of %s is: %s\n" (Val.str(Store.get_var sto var_name)) result;
+  printf "Factorial of %s is: %s\n" (Val.str(Store.get sto var_name)) result;
 
   print_endline "------------------------";
 
-  let term = Store.get_var sto "term" in
+  let term = Store.get sto "term" in
   let s_fibo = fibonacci_stmt "term" in
   let result =
     let eval = eval_stmt prog sto s_fibo in match eval with

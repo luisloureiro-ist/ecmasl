@@ -14,7 +14,7 @@ let eval_binopt_expr (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match 
 
 let rec eval_expr (prog : Prog.t) (sto : Store.t) (e : Expr.t) : Val.t = match e with
   | Val n                -> n
-  | Var x                -> Store.get_var sto x
+  | Var x                -> Store.get sto x
   | UnOpt (uop, e)       -> let v = eval_expr prog sto e in eval_unopt_expr uop v
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog sto e1 and v2 = eval_expr prog sto e2 in eval_binopt_expr bop v1 v2
   | Call (f, es)         -> let vs = List.map (eval_expr prog sto) es in fst (eval_proc prog f vs)
@@ -22,7 +22,7 @@ let rec eval_expr (prog : Prog.t) (sto : Store.t) (e : Expr.t) : Val.t = match e
 (* Syntax for mutually recursive functions *)
 and eval_stmt (prog : Prog.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
     Skip           -> None
-  | Assign (x, e)  -> let v = eval_expr prog sto e in Store.set_var sto x v; None
+  | Assign (x, e)  -> let v = eval_expr prog sto e in Store.set sto x v; None
   | Seq (s1, s2)   -> (let v1 = eval_stmt prog sto s1 in
                        match v1 with
                          None -> eval_stmt prog sto s2
