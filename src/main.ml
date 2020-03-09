@@ -6,7 +6,7 @@ open Interpreter
 
 let print_store (sto : Store.t) : unit =
   print_endline "\nStore contents:\n--------------";
-  print_endline (Store.to_string sto);
+  print_endline (Store.str sto);
   print_endline "--------------\n"
 
 
@@ -110,18 +110,16 @@ let main_parse_files (prog : Prog.t) : unit =
     let expr_contents = load_file "expr_test_file" and
     stmt_contents = load_file "stmt_test_file" in
     let e = parse_expr expr_contents and
-      s = parse_stmt stmt_contents in
-    Store.(
-      let store = create_store [] in
-      ignore (eval_stmt prog store s);
-      print_endline "\nParsed expression file:\n---------------";
-      print_endline (Expr.str e);
-      print_endline "---------------";
-      print_endline "\nParsed statement file:\n---------------";
-      print_endline (Stmt.str s);
-      print_endline "---------------";
-      print_store store
-    )
+      s = parse_stmt stmt_contents and
+      store = Store.create [] in
+    ignore (eval_stmt prog store s);
+    print_endline "\nParsed expression file:\n---------------";
+    print_endline (Expr.str e);
+    print_endline "---------------";
+    print_endline "\nParsed statement file:\n---------------";
+    print_endline (Stmt.str s);
+    print_endline "---------------";
+    print_store store
   )
 
 
@@ -146,10 +144,10 @@ let main_parse_prog () : unit =
   )
 
 ;;
-let main_prog = Prog.create_prog ([]) and
+let main_prog = Prog.create ([]) and
   main_heap = Heap.create () and
-  fact_func = Func.create_func "fact" ["num"] (factorial_stmt "num") and
-  fibo_func = Func.create_func "fibonacci" ["term"] (fibonacci_stmt "term") in
+  fact_func = Func.create "fact" ["num"] (factorial_stmt "num") and
+  fibo_func = Func.create "fibonacci" ["term"] (fibonacci_stmt "term") in
 Hashtbl.add main_prog "fact" fact_func;
 Hashtbl.add main_prog "fibonacci" fibo_func;
 print_endline "\nProgram functions:\n--------------------";
@@ -158,7 +156,7 @@ print_endline (Prog.str main_prog);
 print_endline "\n=========================";
 print_endline "=========================";
 
-let local_store = Store.create_store [("x", Int 2); ("y", Flt 3.)] and
+let local_store = Store.create [("x", Int 2); ("y", Flt 3.)] and
   local_heap = Heap.create () in
 print_store local_store;
 main_expr main_prog local_heap local_store;
@@ -168,7 +166,7 @@ print_store local_store;
 print_endline "=========================";
 print_endline "=========================\n";
 
-let functions_store = Store.create_store [("z", Int 4); ("term", Int 6)] and
+let functions_store = Store.create [("z", Int 4); ("term", Int 6)] and
   functions_heap = Heap.create () in
 main_test_functions main_prog functions_heap functions_store;
 

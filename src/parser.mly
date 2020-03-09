@@ -54,11 +54,11 @@ prog_stmt_target:
 
 prog_target:
   | funcs = separated_list (SEMICOLON, proc_target); EOF;
-   { Prog.create_prog funcs }
+   { Prog.create funcs }
 
 proc_target:
   | FUNCTION; f = VAR; LPAREN; vars = separated_list (COMMA, VAR); RPAREN; LBRACE; s = stmt_target; RBRACE
-   { Func.create_func f vars s }
+   { Func.create f vars s }
 
 (*
   The pipes separate the individual productions, and the curly braces contain a semantic action:
