@@ -7,7 +7,7 @@ type t = Val    of Val.t
        | BinOpt of (bopt * t * t)
        | UnOpt  of (uopt * t)
        | Call   of (string * t list)
-       | NewObj
+       | NewObj of Field.t option * t option
 
 let str_of_unopt (op : uopt) : string = match op with
   | Neg   -> "-"
@@ -29,4 +29,11 @@ let rec str (e : t) : string = match e with
   | UnOpt (op, e)       -> (str_of_unopt op) ^ (str e)
   | BinOpt (op, e1, e2) -> (str e1) ^ " " ^ (str_of_binopt op) ^ " " ^ (str e2)
   | Call (f, es)        -> f ^ " (" ^ List.fold_left (fun acc ele -> acc ^ str ele) "" es ^ ")"
-  | NewObj              -> "{}"
+  | NewObj (f, e)       -> "{ " ^ (
+      match f with
+      | None       -> ""
+      | Some field -> let expr = (match e with
+          | None      -> "undefined"
+          | Some expr -> str expr
+        ) in Field.str field ^ ": " ^ expr
+    ) ^ " }"

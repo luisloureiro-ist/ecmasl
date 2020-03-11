@@ -13,7 +13,7 @@
 %token FUNCTION
 %token LPAREN RPAREN
 %token LBRACE RBRACE
-%token COMMA SEMICOLON
+%token COMMA SEMICOLON COLON
 %token <float> FLOAT
 %token <int> INT
 %token <bool> BOOLEAN
@@ -87,7 +87,9 @@ val_target:
 (* e ::= {} | {f:e} | e.f | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
   | LBRACE; RBRACE;
-    { Expr.NewObj }
+    { Expr.NewObj (None, None) }
+  | LBRACE; f = VAR; COLON; e = expr_target; RBRACE;
+    { Expr.NewObj (Some f, Some e) }
   | v = val_target;
     { Expr.Val v }
   | v = VAR;
