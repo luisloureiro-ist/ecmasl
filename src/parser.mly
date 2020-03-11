@@ -105,8 +105,10 @@ expr_target:
   | LPAREN; e = expr_target; RPAREN;
     { e }
 
-(* s ::= skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e *)
+(* s ::= e.f := e | skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e *)
 stmt_target:
+  | e1 = VAR; PERIOD; f = VAR; DEFEQ; e2 = expr_target;
+    { Stmt.FieldAssign (Expr.Var e1, f, e2) }
   | SKIP;
     { Stmt.Skip }
   | v = VAR; DEFEQ; e = expr_target;

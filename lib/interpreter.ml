@@ -46,6 +46,13 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
   | If (e, s1, s2) -> let v = eval_expr prog heap sto e in if (Val.is_true v) then eval_stmt prog heap sto s1 else eval_stmt prog heap sto s2
   | While (e, s)   -> eval_stmt prog heap sto (If (e, Seq (s, While (e, s)), Skip))
   | Return exp     -> let v = eval_expr prog heap sto exp in Some v
+  | FieldAssign (e_o, f, e_v) -> let loc = (
+      let loc = eval_expr prog heap sto e_o in
+      match loc with
+      | Loc loc -> loc
+      | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldAssign : \"e_o\" is not a Loc value") in
+    let v = eval_expr prog heap sto e_v in
+    Heap.set_field heap loc f v; None
 
 and eval_proc (prog : Prog.t) (heap : Heap.t) (pname : string) (args : Val.t list) : Val.t * Store.t =
   let func = Prog.get_func prog pname in
