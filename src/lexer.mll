@@ -65,6 +65,7 @@ rule read =
   | "while"    { WHILE }
   | "return"   { RETURN }
   | "function" { FUNCTION }
+  | "delete"   { DELETE }
   | int        { INT (int_of_string (Lexing.lexeme lexbuf)) }
   | float      { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
   | bool       { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }

@@ -53,6 +53,13 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
       | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldAssign : \"e_o\" is not a Loc value") in
     let v = eval_expr prog heap sto e_v in
     Heap.set_field heap loc f v; None
+  | FieldDelete (e, f) -> let loc = (
+      let loc = eval_expr prog heap sto e in
+      match loc with
+      | Loc loc -> loc
+      | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldDelete : \"e\" is not a Loc value") in
+    Heap.delete_field heap loc f; None
+
 
 and eval_proc (prog : Prog.t) (heap : Heap.t) (pname : string) (args : Val.t list) : Val.t * Store.t =
   let func = Prog.get_func prog pname in
