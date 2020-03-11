@@ -1,3 +1,6 @@
+let add_fields_to (obj : Object.t) (fes : (Field.t * Expr.t) list) (eval_e : (Expr.t -> Val.t)) : unit =
+  List.iter (fun (f, e) -> let e' = eval_e e in Object.set obj f e') fes
+
 let eval_unopt_expr (op : Expr.uopt) (v : Val.t) : Val.t = match op with
   | Neg -> Val.neg v
 
@@ -18,13 +21,7 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
   | UnOpt (uop, e)       -> let v = eval_expr prog heap sto e in eval_unopt_expr uop v
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr bop v1 v2
   | Call (f, es)         -> let vs = List.map (eval_expr prog heap sto) es in fst (eval_proc prog heap f vs)
-  | NewObj (f, e)        -> let obj = (
-      let obj = Object.create () in
-      match e, f with
-      | _, None
-      | None, _ -> obj
-      | Some e', Some f' -> let expr = eval_expr prog heap sto e' in Object.set obj f' expr; obj
-    ) in let loc = Heap.insert heap obj in Loc loc
+  | NewObj (fes)         -> let obj = Object.create() in add_fields_to obj fes (eval_expr prog heap sto); Loc (Heap.insert heap obj)
   | Access (e, f)        -> let loc = eval_expr prog heap sto e in
     let loc' = (match loc with
           Loc loc -> loc

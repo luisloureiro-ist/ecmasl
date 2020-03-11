@@ -85,12 +85,14 @@ val_target:
   | s = STRING;
     { Val.Str s }
 
+fv_target:
+  | f = VAR; COLON; e = expr_target;
+    { (f, e) }
+
 (* e ::= {} | {f:e} | e.f | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
-  | LBRACE; RBRACE;
-    { Expr.NewObj (None, None) }
-  | LBRACE; f = VAR; COLON; e = expr_target; RBRACE;
-    { Expr.NewObj (Some f, Some e) }
+  | LBRACE; fes = separated_list (COMMA, fv_target); RBRACE;
+    { Expr.NewObj (fes) }
   | e = VAR; PERIOD; f = VAR;
     { Expr.Access (Expr.Var e, f) }
   | v = val_target;
