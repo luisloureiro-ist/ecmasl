@@ -25,6 +25,14 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
       | None, _ -> obj
       | Some e', Some f' -> let expr = eval_expr prog heap sto e' in Object.set obj f' expr; obj
     ) in let loc = Heap.insert heap obj in Loc loc
+  | Access (e, f)        -> let loc = eval_expr prog heap sto e in
+    let loc' = (match loc with
+          Loc loc -> loc
+        | _       -> invalid_arg "Exception in Interpreter.eval_expr | Access : \"e\" is not a Loc value") in
+    let v = Heap.get_field heap loc' f in
+    match v with
+    | None    -> Undef
+    | Some v' -> v'
 
 
 (* Syntax for mutually recursive functions *)

@@ -8,6 +8,7 @@ type t = Val    of Val.t
        | UnOpt  of (uopt * t)
        | Call   of (string * t list)
        | NewObj of Field.t option * t option
+       | Access of t * Field.t
 
 let str_of_unopt (op : uopt) : string = match op with
   | Neg   -> "-"
@@ -33,7 +34,8 @@ let rec str (e : t) : string = match e with
       match f with
       | None       -> ""
       | Some field -> let expr = (match e with
-          | None      -> "undefined"
+          | None      -> Val.str Undef
           | Some expr -> str expr
         ) in Field.str field ^ ": " ^ expr
     ) ^ " }"
+  | Access (e, f)       -> str e ^ "." ^ Field.str f

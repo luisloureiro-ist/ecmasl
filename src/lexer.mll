@@ -44,6 +44,7 @@ rule read =
   | white      { read lexbuf }
   | newline    { read lexbuf }
   | ":="       { DEFEQ }
+  | '.'        { PERIOD }
   | ';'        { SEMICOLON }
   | ':'        { COLON }
   | ','        { COMMA }
