@@ -30,4 +30,4 @@ let delete_field (heap : t) (loc : Loc.t) (field : Field.t) : unit =
   | None   -> ()
   | Some o -> Object.delete o field
 
-let str (heap : t) : string = (Hashtbl.fold (fun n v ac -> (if ac <> "" then ac ^ ", " else ac) ^ (Printf.sprintf "%s: %s" (Loc.str n) (Object.str v))) heap "{ ") ^ " }"
+let str (heap : t) : string = (Hashtbl.fold (fun n v ac -> (if ac <> "{ " then ac ^ ", " else ac) ^ (Printf.sprintf "%s: %s" (Loc.str n) (Object.str v))) heap "{ ") ^ " }"
