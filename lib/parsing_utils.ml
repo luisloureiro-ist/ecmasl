@@ -10,10 +10,6 @@ let parse_prog (str : string) : Prog.t =
   let lexbuf = Lexing.from_string str in
   Parser.prog_target Lexer.read lexbuf
 
-let parse_heap (str : string) : Heap.t =
-  let lexbuf = Lexing.from_string str in
-  Parser.heap_target Lexer.read lexbuf
-
 let load_file f : string =
   let ic = open_in f in
   let n = in_channel_length ic in
