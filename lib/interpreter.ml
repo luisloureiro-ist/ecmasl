@@ -26,31 +26,30 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
     let loc' = (match loc with
           Loc loc -> loc
         | _       -> invalid_arg "Exception in Interpreter.eval_expr | Access : \"e\" is not a Loc value") in
-    let v = Heap.get_field heap loc' f in
-    match v with
+    let v = Heap.get_field heap loc' f in match v with
     | None    -> Undef
     | Some v' -> v'
 
 
 (* Syntax for mutually recursive functions *)
 and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
-    Skip           -> None
-  | Assign (x, e)  -> let v = eval_expr prog heap sto e in Store.set sto x v; None
-  | Seq (s1, s2)   -> (let v1 = eval_stmt prog heap sto s1 in
-                       match v1 with
-                         None -> eval_stmt prog heap sto s2
-                       | Some v1 -> Some v1)
-  | If (e, s1, s2) -> let v = eval_expr prog heap sto e in if (Val.is_true v) then eval_stmt prog heap sto s1 else eval_stmt prog heap sto s2
-  | While (e, s)   -> eval_stmt prog heap sto (If (e, Seq (s, While (e, s)), Skip))
-  | Return exp     -> let v = eval_expr prog heap sto exp in Some v
-  | FieldAssign (e_o, f, e_v) -> let loc = (
+    Skip                      -> None
+  | Assign (x, e)             -> let v = eval_expr prog heap sto e in Store.set sto x v; None
+  | Seq (s1, s2)              -> (let v1 = eval_stmt prog heap sto s1 in
+                                  match v1 with
+                                    None -> eval_stmt prog heap sto s2
+                                  | Some v1 -> Some v1)
+  | If (e, s1, s2)            -> let v = eval_expr prog heap sto e in if (Val.is_true v) then eval_stmt prog heap sto s1 else eval_stmt prog heap sto s2
+  | While (e, s)              -> eval_stmt prog heap sto (If (e, Seq (s, While (e, s)), Skip))
+  | Return exp                -> let v = eval_expr prog heap sto exp in Some v
+  | FieldAssign (e_o, f, e_v) -> let (loc : Loc.t) = (
       let loc = eval_expr prog heap sto e_o in
       match loc with
-      | Loc loc -> loc
+      | Loc l -> l
       | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldAssign : \"e_o\" is not a Loc value") in
     let v = eval_expr prog heap sto e_v in
     Heap.set_field heap loc f v; None
-  | FieldDelete (e, f) -> let loc = (
+  | FieldDelete (e, f)        -> let loc = (
       let loc = eval_expr prog heap sto e in
       match loc with
       | Loc loc -> loc
