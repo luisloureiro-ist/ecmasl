@@ -19,28 +19,28 @@ let plus (v1, v2 : t * t) : t = match v1, v2 with
   | (Int v1, Flt v2) -> Flt (float_of_int v1 +. v2)
   | (Flt v1, Flt v2) -> Flt (v1 +. v2)
   | (Int v1, Int v2) -> Int (v1 + v2)
-  | _ -> raise (Invalid_argument "Exception in Val.plus: this operation doesn't apply to boolean type arguments")
+  | _ -> raise (Invalid_argument "Exception in Val.plus: this operation is only applicable to Float or Int arguments")
 
 let minus (v1, v2 : t * t) : t = match v1, v2 with
   | (Flt v1, Int v2) -> Flt (v1 -. float_of_int v2)
   | (Int v1, Flt v2) -> Flt (float_of_int v1 -. v2)
   | (Flt v1, Flt v2) -> Flt (v1 -. v2)
   | (Int v1, Int v2) -> Int (v1 - v2)
-  | _ -> raise (Invalid_argument "Exception in Val.minus: this operation doesn't apply to boolean type arguments")
+  | _ -> raise (Invalid_argument "Exception in Val.minus: this operation is only applicable to Float or Int arguments")
 
 let times (v1, v2 : t * t) : t = match v1, v2 with
   | (Flt v1, Int v2) -> Flt (v1 *. float_of_int v2)
   | (Int v1, Flt v2) -> Flt (float_of_int v1 *. v2)
   | (Flt v1, Flt v2) -> Flt (v1 *. v2)
   | (Int v1, Int v2) -> Int (v1 * v2)
-  | _ -> raise (Invalid_argument "Exception in Val.times: this operation doesn't apply to boolean type arguments")
+  | _ -> raise (Invalid_argument "Exception in Val.times: this operation is only applicable to Float or Int arguments")
 
 let div (v1, v2 : t * t) : t = match v1, v2 with
   | (Flt v1, Int v2) -> Flt (v1 /. float_of_int v2)
   | (Int v1, Flt v2) -> Flt (float_of_int v1 /. v2)
   | (Flt v1, Flt v2) -> Flt (v1 /. v2)
   | (Int v1, Int v2) -> Int (v1 / v2)
-  | _ -> raise (Invalid_argument "Exception in Val.div: this operation doesn't apply to boolean type arguments")
+  | _ -> raise (Invalid_argument "Exception in Val.div: this operation is only applicable to Float or Int arguments")
 
 let equal (v1, v2 : t * t) : t = Bool (v1 = v2)
 
