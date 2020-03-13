@@ -140,12 +140,11 @@ let arguments () =
 let main_parse_prog () : unit =
   arguments ();
   Parsing_utils.(
-    let prog_contents = load_file !file and
-    heap_contents = load_file !heap_file in
+    let prog_contents = load_file !file in
     let prog = parse_prog prog_contents and
-      heap = parse_heap heap_contents in
-    let (v, _) = eval_prog prog heap in
-    print_endline (Val.str v)
+      heap = Heap.from_json_file !heap_file in
+    print_endline (Heap.str heap); let (v, _) = eval_prog prog heap in
+    print_endline (Val.str v); print_endline (Heap.str heap);
   )
 
 ;;
