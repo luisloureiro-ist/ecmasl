@@ -37,10 +37,14 @@ and eval_call_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (f_name : str
      meaning that the corresponding value in store
      is the name of the function we should call *)
   let vs = List.map (eval_expr prog heap sto) es in
-  let fname = Store.get sto f_name in
-  match fname with
-  | Str f -> fst (eval_proc prog heap f vs)
-  | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
+  try
+    (* Call the function "f_name" in case there's no corresponding value in store *)
+    let fname = Store.get sto f_name in
+    match fname with
+    | Str f -> fst (eval_proc prog heap f vs)
+    | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
+
+  with Not_found -> fst (eval_proc prog heap f_name vs)
 
 
 and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
