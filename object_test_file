@@ -1,0 +1,10 @@
+function main () {
+  x := {
+    w: 2
+  };
+  x.z := 1;
+  y := {};
+  y.z := 3;
+
+  return x.w + x.z + y.z
+}
