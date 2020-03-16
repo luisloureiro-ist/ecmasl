@@ -1,5 +1,6 @@
 function main () {
-  return (fibonacci (6))
+  x := "fibonacci";
+  return x(6)
 };
 
 function fibonacci (n) {
