@@ -78,7 +78,9 @@ val_target:
   | b = BOOLEAN;
     { Val.Bool b}
   | s = STRING;
-    { Val.Str s }
+    { let len = String.length s in
+      let sub = String.sub s 1 (len - 2) in
+      Val.Str sub } (* Remove the double-quote characters from the parsed string *)
 
 fv_target:
   | f = VAR; COLON; e = expr_target;
