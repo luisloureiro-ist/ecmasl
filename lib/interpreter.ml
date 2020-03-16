@@ -20,7 +20,7 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
   | Var x                -> Store.get sto x
   | UnOpt (uop, e)       -> let v = eval_expr prog heap sto e in eval_unopt_expr uop v
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr bop v1 v2
-  | Call (f, es)         -> let vs = List.map (eval_expr prog heap sto) es in fst (eval_proc prog heap f vs)
+  | Call (f, es)         -> eval_call_expr prog heap sto f es
   | NewObj (fes)         -> let obj = Object.create() in add_fields_to obj fes (eval_expr prog heap sto); Loc (Heap.insert heap obj)
   | Access (e, f)        -> let loc = eval_expr prog heap sto e in
     let loc' = (match loc with
@@ -32,6 +32,17 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
 
 
 (* Syntax for mutually recursive functions *)
+and eval_call_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (f_name : string) (es : Expr.t list) : Val.t =
+  (* Check if "f_name" is a string and is in store
+     meaning that the corresponding value in store
+     is the name of the function we should call *)
+  let vs = List.map (eval_expr prog heap sto) es in
+  let fname = Store.get sto f_name in
+  match fname with
+  | Str f -> fst (eval_proc prog heap f vs)
+  | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
+
+
 and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
     Skip                      -> None
   | Assign (x, e)             -> let v = eval_expr prog heap sto e in Store.set sto x v; None
