@@ -20,7 +20,7 @@ let main_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   (* y - 3 *)
   and ey = BinOpt (Minus, Var "y", Val (Flt 3.))
   (* 4 + fact(5) *)
-  and ef = BinOpt (Plus, Val (Int 4), Call ("fact", [Val (Int 5)])) in
+  and ef = BinOpt (Plus, Val (Int 4), Call (Val (Str "fact"), [Val (Int 5)])) in
   print_endline "Expressions:\n---------------------";
   printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr prog heap sto e1));
   printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr prog heap sto e2));
@@ -149,7 +149,7 @@ let main_parse_prog () : unit =
 
 ;;
 let main_heap = Heap.create () and
-  main_func = Func.create "main" [] (Return (Call ("main", []))) and
+  main_func = Func.create "main" [] (Return (Call (Val (Str "main"), []))) and
   fact_func = Func.create "fact" ["num"] (factorial_stmt "num") and
   fibo_func = Func.create "fibonacci" ["term"] (fibonacci_stmt "term") in
 let main_prog = Prog.create ([main_func]) in
