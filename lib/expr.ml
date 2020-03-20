@@ -6,7 +6,7 @@ type t = Val    of Val.t
        | Var    of string
        | BinOpt of (bopt * t * t)
        | UnOpt  of (uopt * t)
-       | Call   of (string * t list)
+       | Call   of (t * t list)
        | NewObj of (Field.t * t) list
        | Access of t * Field.t
 
@@ -29,7 +29,7 @@ let rec str (e : t) : string = match e with
   | Var x               -> x
   | UnOpt (op, e)       -> (str_of_unopt op) ^ (str e)
   | BinOpt (op, e1, e2) -> (str e1) ^ " " ^ (str_of_binopt op) ^ " " ^ (str e2)
-  | Call (f, es)        -> f ^ " (" ^ List.fold_left (fun acc ele -> acc ^ str ele) "" es ^ ")"
+  | Call (f, es)        -> (str f) ^ " (" ^ List.fold_left (fun acc ele -> acc ^ str ele) "" es ^ ")"
   | NewObj (fes)        -> "{ " ^ fields_list_to_string fes ^ " }"
   | Access (e, f)       -> str e ^ "." ^ Field.str f
 

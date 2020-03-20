@@ -100,8 +100,8 @@ expr_target:
     { Expr.UnOpt (Expr.Neg, e) } %prec unopt_prec
   | e1 = expr_target; bop = op_target; e2 = expr_target;
     { Expr.BinOpt (bop, e1, e2) } %prec binopt_prec
-  | v = VAR; LPAREN; es = separated_list (COMMA, expr_target); RPAREN;
-    { Expr.Call (v, es) }
+  | f = expr_target; LPAREN; es = separated_list (COMMA, expr_target); RPAREN;
+    { Expr.Call (f, es) }
   | LPAREN; e = expr_target; RPAREN;
     { e }
 
