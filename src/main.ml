@@ -20,13 +20,16 @@ let main_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   (* y - 3 *)
   and ey = BinOpt (Minus, Var "y", Val (Flt 3.))
   (* 4 + fact(5) *)
-  and ef = BinOpt (Plus, Val (Int 4), Call (Val (Str "fact"), [Val (Int 5)])) in
+  and ef = BinOpt (Plus, Val (Int 4), Call (Val (Str "fact"), [Val (Int 5)]))
+  (* !(5 == 5.) *)
+  and en = UnOpt (Not, BinOpt (Equal, Val (Int 5), Val (Flt 5.))) in
   print_endline "Expressions:\n---------------------";
   printf "e1 => %s = %s;\n" (Expr.str e1) (Val.str (eval_expr prog heap sto e1));
   printf "e2 => %s = %s;\n" (Expr.str e2) (Val.str (eval_expr prog heap sto e2));
   printf "ex => %s = %s;\n" (Expr.str ex) (Val.str (eval_expr prog heap sto ex));
   printf "ey => %s = %s;\n" (Expr.str ey) (Val.str (eval_expr prog heap sto ey));
   printf "ef => %s = %s;\n" (Expr.str ef) (Val.str (eval_expr prog heap sto ef));
+  printf "en => %s = %s;\n" (Expr.str en) (Val.str (eval_expr prog heap sto en));
   print_endline "---------------------\n"
 
 

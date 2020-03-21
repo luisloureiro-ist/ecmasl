@@ -39,7 +39,7 @@ let str_of_binopt (op : bopt) : string = match op with
 let rec str (e : t) : string = match e with
   | Val n               -> Val.str n
   | Var x               -> x
-  | UnOpt (op, e)       -> (str_of_unopt op) ^ (str e)
+  | UnOpt (op, e)       -> (str_of_unopt op) ^ "(" ^ (str e) ^ ")"
   | BinOpt (op, e1, e2) -> (str e1) ^ " " ^ (str_of_binopt op) ^ " " ^ (str e2)
   | Call (f, es)        -> (str f) ^ " (" ^ List.fold_left (fun acc ele -> acc ^ str ele) "" es ^ ")"
   | NewObj (fes)        -> "{ " ^ fields_list_to_string fes ^ " }"
