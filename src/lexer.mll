@@ -52,6 +52,7 @@ rule read =
   | '-'        { MINUS }
   | '*'        { TIMES }
   | '/'        { DIVIDE }
+  | '='        { EQUAL }
   | '>'        { GT }
   | '<'        { LT }
   | ">="       { EGT }

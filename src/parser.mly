@@ -20,12 +20,13 @@
 %token <bool> BOOLEAN
 %token <string> VAR
 %token <string> STRING
-%token PLUS MINUS TIMES DIVIDE GT LT EGT ELT
+%token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT
 %token EOF
 
 %left GT LT EGT ELT
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left EQUAL
 %left SEMICOLON
 
 %nonassoc binopt_prec
@@ -129,6 +130,7 @@ op_target:
   | PLUS   { Expr.Plus }
   | TIMES  { Expr.Times }
   | DIVIDE { Expr.Div }
+  | EQUAL  { Expr.Equal }
   | GT     { Expr.Gt }
   | LT     { Expr.Lt }
   | EGT    { Expr.Egt }
