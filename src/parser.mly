@@ -20,10 +20,10 @@
 %token <bool> BOOLEAN
 %token <string> VAR
 %token <string> STRING
-%token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT
+%token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT IN
 %token EOF
 
-%left GT LT EGT ELT
+%left GT LT EGT ELT IN
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left EQUAL
@@ -135,3 +135,4 @@ op_target:
   | LT     { Expr.Lt }
   | EGT    { Expr.Egt }
   | ELT    { Expr.Elt }
+  | IN     { Expr.InObj }
