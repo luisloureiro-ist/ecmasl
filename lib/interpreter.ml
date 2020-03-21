@@ -1,10 +1,20 @@
 let add_fields_to (obj : Object.t) (fes : (Field.t * Expr.t) list) (eval_e : (Expr.t -> Val.t)) : unit =
   List.iter (fun (f, e) -> let e' = eval_e e in Object.set obj f e') fes
 
+
+let eval_inobj_expr (heap : Heap.t) (loc : Val.t) (field : Val.t) : Val.t =
+  let b = match loc, field with
+    | Loc l, Str f -> Heap.get_field heap l f
+    | _            -> invalid_arg "Exception in Interpreter.eval_inobj_expr : \"loc\" is not a Loc value or \"field\" is not a string" in
+  match b with
+  | Some v -> Bool (true)
+  | None -> Bool (false)
+
+
 let eval_unopt_expr (op : Expr.uopt) (v : Val.t) : Val.t = match op with
   | Neg -> Val.neg v
 
-let eval_binopt_expr (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match op with
+let eval_binopt_expr (heap : Heap.t) (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match op with
   | Plus  -> Val.plus (v1, v2)
   | Minus -> Val.minus (v1, v2)
   | Times -> Val.times (v1, v2)
@@ -14,12 +24,13 @@ let eval_binopt_expr (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match 
   | Lt    -> Val.lt (v1, v2)
   | Egt   -> Val.egt (v1, v2)
   | Elt   -> Val.elt (v1, v2)
+  | InObj -> eval_inobj_expr heap v1 v2
 
 let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) : Val.t = match e with
   | Val n                -> n
   | Var x                -> Store.get sto x
   | UnOpt (uop, e)       -> let v = eval_expr prog heap sto e in eval_unopt_expr uop v
-  | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr bop v1 v2
+  | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr heap bop v1 v2
   | Call (f, es)         -> eval_call_expr prog heap sto f es
   | NewObj (fes)         -> let obj = Object.create() in add_fields_to obj fes (eval_expr prog heap sto); Loc (Heap.insert heap obj)
   | Access (e, f)        -> (let loc = eval_expr prog heap sto e in

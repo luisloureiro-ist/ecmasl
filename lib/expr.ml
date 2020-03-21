@@ -1,4 +1,13 @@
-type bopt = Plus | Minus | Times | Div | Equal | Gt | Lt | Egt | Elt
+type bopt = Plus
+          | Minus
+          | Times
+          | Div
+          | Equal
+          | Gt
+          | Lt
+          | Egt
+          | Elt
+          | InObj
 
 type uopt = Neg
 
@@ -23,6 +32,7 @@ let str_of_binopt (op : bopt) : string = match op with
   | Lt    -> "<"
   | Egt   -> ">="
   | Elt   -> "<="
+  | InObj -> "in"
 
 let rec str (e : t) : string = match e with
   | Val n               -> Val.str n
