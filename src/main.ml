@@ -64,7 +64,7 @@ let factorial_stmt (param_name : string) : Stmt.t =
 
 let fibonacci_stmt (param_name : string) : Stmt.t =
   let s1 = Assign ("a", Val (Int 1)) and
-  s2 = Assign ("b", Val (Int 0)) and
+  s2 = Assign ("b", Val (Int 1)) and
   s3 = Assign ("temp", Val (Int 0)) and
   (* temp = a *)
   s4 = Assign ("temp", Var "a") and
@@ -75,7 +75,7 @@ let fibonacci_stmt (param_name : string) : Stmt.t =
   (* num = num - 1 *)
   s7 = Assign (param_name, BinOpt (Minus, Var param_name, Val (Int 1))) and
   (* return b *)
-  s8 = Return (Var "b") in
+  s8 = Return (Var "a") in
   let s123 = Seq (s1, Seq(s2, s3)) and
     s4567 = Seq (s4, Seq (s5, Seq (s6, s7))) in
   let swhile = While (BinOpt (Egt, Var param_name, Val (Int 1)), s4567) in
