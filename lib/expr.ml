@@ -10,6 +10,7 @@ type bopt = Plus
           | InObj
 
 type uopt = Neg
+          | Not
 
 type t = Val    of Val.t
        | Var    of string
@@ -20,7 +21,8 @@ type t = Val    of Val.t
        | Access of t * Field.t
 
 let str_of_unopt (op : uopt) : string = match op with
-  | Neg   -> "-"
+  | Neg -> "-"
+  | Not -> "!"
 
 let str_of_binopt (op : bopt) : string = match op with
   | Plus  -> "+"

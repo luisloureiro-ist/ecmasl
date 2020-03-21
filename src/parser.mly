@@ -20,10 +20,10 @@
 %token <bool> BOOLEAN
 %token <string> VAR
 %token <string> STRING
-%token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT IN
+%token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT IN NOT
 %token EOF
 
-%left GT LT EGT ELT IN
+%left GT LT EGT ELT IN NOT
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left EQUAL
@@ -99,6 +99,8 @@ expr_target:
     { Expr.Var v }
   | MINUS; e = expr_target;
     { Expr.UnOpt (Expr.Neg, e) } %prec unopt_prec
+  | NOT; e = expr_target;
+    { Expr.UnOpt (Expr.Not, e) } %prec unopt_prec
   | e1 = expr_target; bop = op_target; e2 = expr_target;
     { Expr.BinOpt (bop, e1, e2) } %prec binopt_prec
   | f = expr_target; LPAREN; es = separated_list (COMMA, expr_target); RPAREN;

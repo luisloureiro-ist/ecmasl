@@ -13,6 +13,7 @@ let eval_inobj_expr (heap : Heap.t) (loc : Val.t) (field : Val.t) : Val.t =
 
 let eval_unopt_expr (op : Expr.uopt) (v : Val.t) : Val.t = match op with
   | Neg -> Val.neg v
+  | Not -> Val.not v
 
 let eval_binopt_expr (heap : Heap.t) (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match op with
   | Plus  -> Val.plus (v1, v2)

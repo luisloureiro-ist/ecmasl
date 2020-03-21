@@ -58,6 +58,7 @@ rule read =
   | ">="       { EGT }
   | "<="       { ELT }
   | "in"       { IN }
+  | '!'        { NOT }
   | '('        { LPAREN }
   | ')'        { RPAREN }
   | '{'        { LBRACE }
