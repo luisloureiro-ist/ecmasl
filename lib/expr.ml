@@ -7,6 +7,8 @@ type bopt = Plus
           | Lt
           | Egt
           | Elt
+          | Log_And
+          | Log_Or
           | InObj
 
 type uopt = Neg
@@ -25,16 +27,18 @@ let str_of_unopt (op : uopt) : string = match op with
   | Not -> "!"
 
 let str_of_binopt (op : bopt) : string = match op with
-  | Plus  -> "+"
-  | Minus -> "-"
-  | Times -> "*"
-  | Div   -> "/"
-  | Equal -> "=="
-  | Gt    -> ">"
-  | Lt    -> "<"
-  | Egt   -> ">="
-  | Elt   -> "<="
-  | InObj -> "in"
+  | Plus    -> "+"
+  | Minus   -> "-"
+  | Times   -> "*"
+  | Div     -> "/"
+  | Equal   -> "=="
+  | Gt      -> ">"
+  | Lt      -> "<"
+  | Egt     -> ">="
+  | Elt     -> "<="
+  | Log_And -> "&&"
+  | Log_Or  -> "||"
+  | InObj   -> "in"
 
 let rec str (e : t) : string = match e with
   | Val n               -> Val.str n

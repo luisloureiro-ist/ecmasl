@@ -56,6 +56,14 @@ let egt (v1, v2 : t * t) : t = Bool (v1 >= v2)
 
 let elt (v1, v2 : t * t) : t = Bool (v1 <= v2)
 
+let log_and (v1, v2 : t * t) : t = match v1, v2 with
+  | Bool v1, Bool v2 -> Bool (v1 && v2)
+  | _                -> invalid_arg "Exception in Val.log_and: this operation is only applicable to Bool arguments"
+
+let log_or (v1, v2 : t * t) : t = match v1, v2 with
+  | Bool v1, Bool v2 -> Bool (v1 || v2)
+  | _                -> invalid_arg "Exception in Val.log_or: this operation is only applicable to Bool arguments"
+
 let is_true (v : t) : bool = match v with
   | Bool v -> v
   | _      -> invalid_arg "Exception in Val.is_true: argument is not boolean"

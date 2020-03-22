@@ -16,16 +16,18 @@ let eval_unopt_expr (op : Expr.uopt) (v : Val.t) : Val.t = match op with
   | Not -> Val.not v
 
 let eval_binopt_expr (heap : Heap.t) (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) : Val.t = match op with
-  | Plus  -> Val.plus (v1, v2)
-  | Minus -> Val.minus (v1, v2)
-  | Times -> Val.times (v1, v2)
-  | Div   -> Val.div (v1, v2)
-  | Equal -> Val.equal (v1, v2)
-  | Gt    -> Val.gt (v1, v2)
-  | Lt    -> Val.lt (v1, v2)
-  | Egt   -> Val.egt (v1, v2)
-  | Elt   -> Val.elt (v1, v2)
-  | InObj -> eval_inobj_expr heap v1 v2
+  | Plus    -> Val.plus (v1, v2)
+  | Minus   -> Val.minus (v1, v2)
+  | Times   -> Val.times (v1, v2)
+  | Div     -> Val.div (v1, v2)
+  | Equal   -> Val.equal (v1, v2)
+  | Gt      -> Val.gt (v1, v2)
+  | Lt      -> Val.lt (v1, v2)
+  | Egt     -> Val.egt (v1, v2)
+  | Elt     -> Val.elt (v1, v2)
+  | Log_And -> Val.log_and (v1, v2)
+  | Log_Or  -> Val.log_or (v1, v2)
+  | InObj   -> eval_inobj_expr heap v1 v2
 
 let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) : Val.t = match e with
   | Val n                -> n

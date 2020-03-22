@@ -20,10 +20,11 @@
 %token <bool> BOOLEAN
 %token <string> VAR
 %token <string> STRING
+%token LOG_AND LOG_OR
 %token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT IN NOT
 %token EOF
 
-%left GT LT EGT ELT IN NOT
+%left GT LT EGT ELT IN NOT LOG_AND LOG_OR
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left EQUAL
@@ -137,13 +138,15 @@ ifelse_target:
     { (None, s) }
 
 op_target:
-  | MINUS  { Expr.Minus }
-  | PLUS   { Expr.Plus }
-  | TIMES  { Expr.Times }
-  | DIVIDE { Expr.Div }
-  | EQUAL  { Expr.Equal }
-  | GT     { Expr.Gt }
-  | LT     { Expr.Lt }
-  | EGT    { Expr.Egt }
-  | ELT    { Expr.Elt }
-  | IN     { Expr.InObj }
+  | MINUS   { Expr.Minus }
+  | PLUS    { Expr.Plus }
+  | TIMES   { Expr.Times }
+  | DIVIDE  { Expr.Div }
+  | EQUAL   { Expr.Equal }
+  | GT      { Expr.Gt }
+  | LT      { Expr.Lt }
+  | EGT     { Expr.Egt }
+  | ELT     { Expr.Elt }
+  | LOG_AND { Expr.Log_And }
+  | LOG_OR  { Expr.Log_Or }
+  | IN      { Expr.InObj }

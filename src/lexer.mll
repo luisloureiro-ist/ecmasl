@@ -61,6 +61,8 @@ rule read =
   | "<="       { ELT }
   | "in"       { IN }
   | '!'        { NOT }
+  | "&&"       { LOG_AND }
+  | "||"       { LOG_OR }
   | '('        { LPAREN }
   | ')'        { RPAREN }
   | '{'        { LBRACE }
