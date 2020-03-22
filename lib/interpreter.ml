@@ -53,6 +53,16 @@ and eval_call_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (f_name : Exp
   | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
 
 
+and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
+  if List.length exps_stmts = 0 then None
+  else let e_s = List.hd exps_stmts and rest = List.tl exps_stmts in
+    match e_s with
+    | Some e, s -> (let v = eval_expr prog heap sto e in
+                    if (Val.is_true v) then eval_stmt prog heap sto s
+                    else eval_stmt prog heap sto (If rest))
+    | None, s   -> eval_stmt prog heap sto s
+
+
 and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
     Skip                      -> None
   | Assign (x, e)             -> let v = eval_expr prog heap sto e in Store.set sto x v; None
@@ -60,8 +70,8 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
                                   match v1 with
                                     None -> eval_stmt prog heap sto s2
                                   | Some v1 -> Some v1)
-  | If (e, s1, s2)            -> let v = eval_expr prog heap sto e in if (Val.is_true v) then eval_stmt prog heap sto s1 else eval_stmt prog heap sto s2
-  | While (e, s)              -> eval_stmt prog heap sto (If (e, Seq (s, While (e, s)), Skip))
+  | If (exps_stmts)           -> eval_if_stmt prog heap sto exps_stmts
+  | While (e, s)              -> eval_stmt prog heap sto (If ([Some e, Seq (s, While (e, s))]))
   | Return exp                -> let v = eval_expr prog heap sto exp in Some v
   | FieldAssign (e_o, f, e_v) -> (let (loc : Loc.t) =
                                     (let loc = eval_expr prog heap sto e_o in

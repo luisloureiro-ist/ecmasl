@@ -38,9 +38,9 @@ let main_stmt (prog : Prog.t) (heap : Heap.t) (sto : Store.t) : unit =
   (* x = 3.5 *)
   and s2 = Assign ("x", Val (Flt 3.5))
   (* z = 1; if (z) { z = 2 } else { z = 0 } *)
-  and s3 = Seq (Assign("z", Val (Str "variable z")), If(Val (Bool true), Assign("w", Val (Bool false)), Assign("w", Val (Int 0))))
+  and s3 = Seq (Assign("z", Val (Str "variable z")), If([(Some (Val (Bool true)), Assign("w", Val (Bool false))); (None, Assign("w", Val (Int 0)))]))
   (* if (y) { x = 1 } *)
-  and s4 = If (BinOpt (Gt, Var "x", Val (Flt 2.)), Assign ("x", Val (Flt 2.)), Skip)
+  and s4 = If ([(Some (BinOpt (Gt, Var "x", Val (Flt 2.))), Assign ("x", Val (Flt 2.)))])
   (* while (x) { if (y) { x = x - 1 } } *)
   and s5 = While (BinOpt (Egt, Var "x", Val (Flt 0.)), Assign ("x", BinOpt (Minus, Var "x", Val (Flt 1.)))) in
   print_endline "Statements:\n------------------";

@@ -120,12 +120,21 @@ stmt_target:
     { Stmt.Assign (v, e) }
   | s1 = stmt_target; SEMICOLON; s2 = stmt_target;
     { Stmt.Seq (s1, s2) }
-  | IF; LPAREN; e = expr_target; RPAREN; LBRACE; s1 = stmt_target; RBRACE; ELSE; LBRACE; s2 = stmt_target; RBRACE;
-    { Stmt.If (e, s1, s2)}
+  | exps_stmts = separated_list (COMMA, ifelse_target);
+    { Stmt.If (exps_stmts) }
   | WHILE; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
     { Stmt.While (e, s) }
   | RETURN; e = expr_target;
     { Stmt.Return e }
+
+(* if (e) { s } | else if (e) { s } | else { s } *)
+ifelse_target:
+  | IF; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
+    { (Some e, s) }
+  | ELSE; IF; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
+    { (Some e, s) }
+  | ELSE; LBRACE; s = stmt_target; RBRACE;
+    { (None, s) }
 
 op_target:
   | MINUS  { Expr.Minus }
