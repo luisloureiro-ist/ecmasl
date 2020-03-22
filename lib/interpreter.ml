@@ -49,10 +49,12 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
 (* Syntax for mutually recursive functions *)
 and eval_call_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (f_name : Expr.t) (es : Expr.t list) : Val.t =
   let vs = List.map (eval_expr prog heap sto) es in
-  let fname = eval_expr prog heap sto f_name in
-  match fname with
-  | Str f -> fst (eval_proc prog heap f vs)
-  | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
+  try
+    let fname = eval_expr prog heap sto f_name in
+    match fname with
+    | Str f -> fst (eval_proc prog heap f vs)
+    | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
+  with Not_found -> fst (eval_proc prog heap (Expr.str f_name) vs)
 
 
 and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
