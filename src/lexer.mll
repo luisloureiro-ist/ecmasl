@@ -8,6 +8,8 @@
 {
   open Lexing
   open Parser
+
+  exception SyntaxError of string
 }
 
 (*
@@ -74,4 +76,5 @@ rule read =
   | bool       { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
   | string     { STRING (Lexing.lexeme lexbuf) }
   | var        { VAR (Lexing.lexeme lexbuf) }
+  | _          { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
   | eof        { EOF }
