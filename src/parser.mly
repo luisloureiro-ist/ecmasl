@@ -10,6 +10,7 @@
 %token WHILE
 %token IF ELSE
 %token RETURN
+%token UNDEFINED
 %token FUNCTION
 %token LPAREN RPAREN
 %token LBRACE RBRACE
@@ -73,6 +74,8 @@ proc_target:
 
 (* v ::= f | i | b | s *)
 val_target:
+  | UNDEFINED;
+    { Val.Undef }
   | f = FLOAT;
     { Val.Flt f }
   | i = INT;
