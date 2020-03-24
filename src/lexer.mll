@@ -9,7 +9,7 @@
   open Lexing
   open Parser
 
-  exception SyntaxError of string
+  exception Syntax_error of string
 }
 
 (*
@@ -81,5 +81,13 @@ rule read =
   | bool        { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
   | string      { STRING (Lexing.lexeme lexbuf) }
   | var         { VAR (Lexing.lexeme lexbuf) }
-  | _           { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
+  | "/*"        { read_comment lexbuf }
+  | _           { raise (Syntax_error ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
   | eof         { EOF }
+
+and read_comment =
+(* Read comments *)
+  parse
+  | "*/" { read lexbuf }
+  | _    { read_comment lexbuf }
+  | eof  { raise (Syntax_error ("Comment is not terminated."))}
