@@ -64,16 +64,6 @@ and eval_access_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t
   | Some v' -> v'
 
 
-and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
-  if List.length exps_stmts = 0 then None
-  else let e_s = List.hd exps_stmts and rest = List.tl exps_stmts in
-    match e_s with
-    | Some e, s -> (let v = eval_expr prog heap sto e in
-                    if (Val.is_true v) then eval_stmt prog heap sto s
-                    else eval_stmt prog heap sto (If rest))
-    | None, s   -> eval_stmt prog heap sto s
-
-
 and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t option = match s with
     Skip                      -> None
   | Assign (x, e)             -> let v = eval_expr prog heap sto e in Store.set sto x v; None
@@ -99,6 +89,16 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
                                      | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldDelete : \"e\" is not a Loc value") in
                                   Heap.delete_field heap loc f; None
                                  )
+
+
+and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
+  if List.length exps_stmts = 0 then None
+  else let e_s = List.hd exps_stmts and rest = List.tl exps_stmts in
+    match e_s with
+    | Some e, s -> (let v = eval_expr prog heap sto e in
+                    if (Val.is_true v) then eval_stmt prog heap sto s
+                    else eval_stmt prog heap sto (If rest))
+    | None, s   -> eval_stmt prog heap sto s
 
 
 and eval_proc (prog : Prog.t) (heap : Heap.t) (pname : string) (args : Val.t list) : Val.t * Store.t =
