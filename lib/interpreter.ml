@@ -2,7 +2,7 @@ let add_fields_to (obj : Object.t) (fes : (Field.t * Expr.t) list) (eval_e : (Ex
   List.iter (fun (f, e) -> let e' = eval_e e in Object.set obj f e') fes
 
 
-let eval_inobj_expr (heap : Heap.t) (loc : Val.t) (field : Val.t) : Val.t =
+let eval_inobj_expr (heap : Heap.t) (field : Val.t) (loc : Val.t) : Val.t =
   let b = match loc, field with
     | Loc l, Str f -> Heap.get_field heap l f
     | _            -> invalid_arg "Exception in Interpreter.eval_inobj_expr : \"loc\" is not a Loc value or \"field\" is not a string" in
