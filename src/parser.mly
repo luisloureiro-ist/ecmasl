@@ -127,7 +127,7 @@ stmt_target:
     { Stmt.Assign (v, e) }
   | s1 = stmt_target; SEMICOLON; s2 = stmt_target;
     { Stmt.Seq (s1, s2) }
-  | exps_stmts = separated_list (COMMA, ifelse_target);
+  | exps_stmts = list (ifelse_target);
     { Stmt.If (exps_stmts) }
   | WHILE; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
     { Stmt.While (e, s) }
