@@ -14,6 +14,7 @@
 %token FUNCTION
 %token LPAREN RPAREN
 %token LBRACE RBRACE
+%token LBRACK RBRACK
 %token PERIOD COMMA SEMICOLON COLON
 %token DELETE
 %token <float> FLOAT
@@ -81,7 +82,7 @@ val_target:
   | i = INT;
     { Val.Int i }
   | b = BOOLEAN;
-    { Val.Bool b}
+    { Val.Bool b }
   | s = STRING;
     { let len = String.length s in
       let sub = String.sub s 1 (len - 2) in
@@ -91,12 +92,14 @@ fv_target:
   | f = VAR; COLON; e = expr_target;
     { (f, e) }
 
-(* e ::= {} | {f:e} | e.f | v | x | -e | e+e | f(e) | (e) *)
+(* e ::= {} | {f:e} | e.f | e[f] | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
   | LBRACE; fes = separated_list (COMMA, fv_target); RBRACE;
     { Expr.NewObj (fes) }
-  | e = VAR; PERIOD; f = VAR;
-    { Expr.Access (Expr.Var e, f) }
+  | e = expr_target; PERIOD; f = VAR;
+    { Expr.Access (e, Expr.Val (Str f)) }
+  | e = expr_target; LBRACK; f = expr_target; RBRACK;
+    { Expr.Access (e, f) }
   | v = val_target;
     { Expr.Val v }
   | v = VAR;

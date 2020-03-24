@@ -36,14 +36,7 @@ let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) :
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr heap bop v1 v2
   | Call (f, es)         -> eval_call_expr prog heap sto f es
   | NewObj (fes)         -> let obj = Object.create() in add_fields_to obj fes (eval_expr prog heap sto); Loc (Heap.insert heap obj)
-  | Access (e, f)        -> (let loc = eval_expr prog heap sto e in
-                             let loc' = (match loc with
-                                   Loc loc -> loc
-                                 | _       -> invalid_arg "Exception in Interpreter.eval_expr | Access : \"e\" is not a Loc value") in
-                             (let v = Heap.get_field heap loc' f in match v with
-                               | None    -> Undef
-                               | Some v' -> v'
-                             ))
+  | Access (e, f)        -> eval_access_expr prog heap sto e f
 
 
 (* Syntax for mutually recursive functions *)
@@ -55,6 +48,20 @@ and eval_call_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (f_name : Exp
     | Str f -> fst (eval_proc prog heap f vs)
     | _     -> invalid_arg "Exception in Interpreter.eval_call_expr | value found in store is not a string."
   with Not_found -> fst (eval_proc prog heap (Expr.str f_name) vs)
+
+
+and eval_access_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) (f : Expr.t) : Val.t =
+  let loc = eval_expr prog heap sto e and field = eval_expr prog heap sto f in
+  let loc' = (match loc with
+      | Loc loc -> loc
+      | _       -> invalid_arg "Exception in Interpreter.eval_access_expr : \"e\" didn't evaluate to Loc") in
+  let field' = (match field with
+      | Str field -> field
+      | _         -> invalid_arg "Exception in Interpreter.eval_access_expr : \"f\" didn't evaluate to Str") in
+  let v = Heap.get_field heap loc' field' in
+  match v with
+  | None    -> Undef
+  | Some v' -> v'
 
 
 and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
