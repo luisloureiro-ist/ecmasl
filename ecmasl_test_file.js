@@ -89,6 +89,165 @@ function IsGenericPropertyDescriptor (Desc) {
   return false
 };
 
+/**
+ * 8.10.4 FromPropertyDescriptor ( Desc )
+ *
+ * When the abstract operation FromPropertyDescriptor is called with property descriptor Desc, the following steps are taken:
+ *
+ * The following algorithm assumes that Desc is a fully populated Property Descriptor, such as that returned from [[GetOwnProperty]] (see 8.12.1).
+ */
+function FromPropertyDescriptor (Desc) {
+  /** 1. If Desc is undefined, then return undefined. */
+  if (Desc = undefined) {
+    return undefined
+  };
+
+  /** 2. Let obj be the result of creating a new object as if by the expression new Object() where Object is the standard built-in constructor with that name. */
+  obj := new Object();
+
+  /** 3. If IsDataDescriptor(Desc) is true, then: */
+  if (IsDataPropertyDescriptor(Desc)) {
+    /** a. Call the [[DefineOwnProperty]] internal method of obj with arguments "value",
+     *  Property Descriptor {[[Value]]: Desc.[[Value]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+    obj.DefineOwnProperty("value", {
+      Value: Desc.Value,
+      Writable: true,
+      Enumerable: true,
+      Configurable: true
+    }, false);
+    /** b. Call the [[DefineOwnProperty]] internal method of obj with arguments "writable",
+     *  Property Descriptor {[[Value]]: Desc.[[Writable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+    obj.DefineOwnProperty("writable", {
+      Value: Desc.Writable,
+      Writable: true,
+      Enumerable: true,
+      Configurable: true
+    }, false);
+  }
+  /** 4. Else, IsAccessorDescriptor(Desc) must be true, so: */
+  else if (IsAccessorPropertyDescriptor(Desc)) {
+    /** a. Call the [[DefineOwnProperty]] internal method of obj with arguments "get",
+     *  Property Descriptor {[[Value]]: Desc.[[Get]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+    obj.DefineOwnProperty("get", {
+      Value: Desc.Get,
+      Writable: true,
+      Enumerable: true,
+      Configurable: true
+    }, false);
+    /** b. Call the [[DefineOwnProperty]] internal method of obj with arguments "set",
+     *  Property Descriptor {[[Value]]: Desc.[[Set]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+    obj.DefineOwnProperty("set", {
+      Value: Desc.Set,
+      Writable: true,
+      Enumerable: true,
+      Configurable: true
+    }, false);
+  };
+
+  /** 5. Call the [[DefineOwnProperty]] internal method of obj with arguments "enumerable",
+   *  Property Descriptor {[[Value]]: Desc.[[Enumerable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+  obj.DefineOwnProperty("enumerable", {
+    Value: Desc.Enumerable,
+    Writable: true,
+    Enumerable: true,
+    Configurable: true
+  }, false);
+
+  /** 6. Call the [[DefineOwnProperty]] internal method of obj with arguments "configurable",
+   *    Property Descriptor {[[Value]]: Desc.[[Configurable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
+  obj.DefineOwnProperty("configurable", {
+    Value: Desc.Configurable,
+    Writable: true,
+    Enumerable: true,
+    Configurable: true
+  }, false);
+
+   /** 7. Return obj. */
+   return obj
+}
+
+
+/**
+ * 8.10.5 ToPropertyDescriptor ( Obj )
+ *
+ * When the abstract operation ToPropertyDescriptor is called with object Desc, the following steps are taken:
+ */
+function ToPropertyDescriptor (Obj) {
+  /** 1. If Type(Obj) is not Object throw a TypeError exception. */
+  if (Type(Obj) != Object) {
+    throw TypeErrorException();
+  };
+
+  /** 2. Let desc be the result of creating a new Property Descriptor that initially has no fields. */
+  desc := NewPropertyDescriptor();
+
+  /** 3. If the result of calling the [[HasProperty]] internal method of Obj with argument "enumerable" is true, then: */
+  if (Obj.HasProperty("enumerable")) {
+    /** a. Let enum be the result of calling the [[Get]] internal method of Obj with "enumerable". */
+    enum := Obj.Get("enumerable");
+    /** b. Set the [[Enumerable]] field of desc to ToBoolean(enum). */
+    desc.Enumerable := ToBoolean(enum);
+  };
+
+  /** 4. If the result of calling the [[HasProperty]] internal method of Obj with argument "configurable" is true, then: */
+  if (Obj.HasProperty("configurable")) {
+    /** a. Let conf be the result of calling the [[Get]] internal method of Obj with argument "configurable". */
+    conf := Obj.Get("configurable");
+    /** b. Set the [[Configurable]] field of desc to ToBoolean(conf). */
+    desc.Configurable := ToBoolean(conf);
+  };
+
+  /** 5. If the result of calling the [[HasProperty]] internal method of Obj with argument "value" is true, then: */
+  if (Obj.HasProperty("value")) {
+    /** a. Let value be the result of calling the [[Get]] internal method of Obj with argument “value”. */
+    value := Obj.Get("value");
+    /** b. Set the [[Value]] field of desc to value. */
+    desc.Value := value;
+  };
+
+  /** 6. If the result of calling the [[HasProperty]] internal method of Obj with argument "writable" is true, then: */
+  if (Obj.HasProperty("writable")) {
+    /** a. Let writable be the result of calling the [[Get]] internal method of Obj with argument "writable". */
+    writable := Obj.Get("writable");
+    /** b. Set the [[Writable]] field of desc to ToBoolean(writable). */
+    desc.Writable := ToBoolean(writable);
+  };
+
+  /** 7. If the result of calling the [[HasProperty]] internal method of Obj with argument "get" is true, then: */
+  if (Obj.HasProperty("get")) {
+    /** a. Let getter be the result of calling the [[Get]] internal method of Obj with argument "get". */
+    getter := Obj.Get("get");
+    /** b. If IsCallable(getter) is false and getter is not undefined, then throw a TypeError exception. */
+    if (IsCallable(getter) = false && !(getter = undefined)) {
+      throw TypeErrorException();
+    };
+    /** c. Set the [[Get]] field of desc to getter. */
+    desc.Get := getter;
+  };
+
+  /** 8. If the result of calling the [[HasProperty]] internal method of Obj with argument "set" is true, then: */
+  if (Obj.HasProperty("set")) {
+    /** a. Let setter be the result of calling the [[Get]] internal method of Obj with argument "set". */
+    setter := Obj.Get("set");
+    /** b. If IsCallable(setter) is false and setter is not undefined, then throw a TypeError exception. */
+    if (IsCallable(setter) = false && !(setter = undefined)) {
+      throw TypeErrorException();
+    }
+    /** c. Set the [[Set]] field of desc to setter. */
+    desc.Set := setter;
+  };
+
+  /** 9. If either desc.[[Get]] or desc.[[Set]] are present, then: */
+  if ("Get" in desc || "Set" in desc) {
+    /** a. If either desc.[[Value]] or desc.[[Writable]] are present, then throw a TypeError exception. */
+    if ("Value" in desc || "Writable" in desc) {
+      throw TypeErrorException();
+    }
+  };
+
+  /** 10. Return desc. */
+  return desc
+}
 
 /**
  * 8.12 Algorithms for Object Internal Methods
