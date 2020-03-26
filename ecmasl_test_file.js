@@ -295,6 +295,31 @@ function GetOwnProperty(O, P) {
   return D
 };
 
+/**
+ * 8.12.2 [[GetProperty]] (P)
+ *
+ * When the [[GetProperty]] internal method of O is called with property name P, the following steps are taken:
+ */
+function GetProperty (O, P) {
+  /** 1. Let prop be the result of calling the [[GetOwnProperty]] internal method of O with property name P. */
+  prop := O.GetOwnProperty(P);
+
+  /** 2. If prop is not undefined, return prop. */
+  if (!(prop = undefined)) {
+    return prop
+  };
+
+  /** 3. Let proto be the value of the [[Prototype]] internal property of O. */
+  proto := O.Prototype;
+
+  /** 4. If proto is null, return undefined. */
+  if (proto = null) {
+    return undefined
+  };
+
+  /** 5. Return the result of calling the [[GetProperty]] internal method of proto with argument P. */
+  return proto.GetProperty(P)
+};
 
 function main () {
   loc1 := { };
