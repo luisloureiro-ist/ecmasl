@@ -321,6 +321,39 @@ function GetProperty (O, P) {
   return proto.GetProperty(P)
 };
 
+/**
+ * 8.12.3 [[Get]] (P)
+ *
+ * When the [[Get]] internal method of O is called with property name P, the following steps are taken:
+ */
+function Get(O, P) {
+  /** 1. Let desc be the result of calling the [[GetProperty]] internal method of O with property name P. */
+  desc := O.GetProperty(P);
+
+  /** 2. If desc is undefined, return undefined. */
+  if (desc = undefined) {
+    return undefined;
+  };
+
+  /** 3. If IsDataDescriptor(desc) is true, return desc.[[Value]]. */
+  if (IsDataPropertyDescriptor(desc)) {
+    return desc.Value
+  }
+  /** 4. Otherwise, IsAccessorDescriptor(desc) must be true so, let getter be desc.[[Get]]. */
+  else if (IsAccessorPropertyDescriptor(desc)) {
+    getter := desc.Get;
+
+    /** 5. If getter is undefined, return undefined. */
+    if (getter = undefined) {
+      return undefined
+    };
+
+    /** 6. Return the result calling the[[Call]] internal method of getter providing O as the this value and providing no arguments. */
+    return getter.Call(O)
+  }
+};
+
+
 function main () {
   loc1 := { };
   loc2 := NewPropertyDescriptor();
