@@ -89,10 +89,6 @@ val_target:
       let sub = String.sub s 1 (len - 2) in
       Val.Str sub } (* Remove the double-quote characters from the parsed string *)
 
-fv_target:
-  | f = VAR; COLON; e = expr_target;
-    { (f, e) }
-
 (* e ::= {} | {f:e} | e.f | e[f] | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
   | LBRACE; fes = separated_list (COMMA, fv_target); RBRACE;
@@ -116,6 +112,10 @@ expr_target:
   | LPAREN; e = expr_target; RPAREN;
     { e }
 
+fv_target:
+  | f = VAR; COLON; e = expr_target;
+    { (f, e) }
+
 (* s ::= e.f := e | delete e.f | skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e *)
 stmt_target:
   | e1 = VAR; PERIOD; f = VAR; DEFEQ; e2 = expr_target;
@@ -137,12 +137,16 @@ stmt_target:
 
 (* if (e) { s } | else if (e) { s } | else { s } *)
 ifelse_target:
-  | IF; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
-    { (Some e, s) }
-  | ELSE; IF; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
-    { (Some e, s) }
+  | if_t = if_target;
+    { if_t }
+  | ELSE; if_t = if_target;
+    { if_t }
   | ELSE; LBRACE; s = stmt_target; RBRACE;
     { (None, s) }
+
+if_target:
+  | IF; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
+    { (Some e, s) }
 
 op_target:
   | MINUS   { Expr.Minus }
