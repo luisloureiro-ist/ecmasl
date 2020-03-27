@@ -353,6 +353,75 @@ function Get(O, P) {
   }
 };
 
+/**
+ * 8.12.4 [[CanPut]] (P)
+ *
+ * When the [[CanPut]] internal method of O is called with property name P, the following steps are taken:
+ */
+function CanPut(O, P) {
+  /** 1. Let desc be the result of calling the[[GetOwnProperty]] internal method of O with argument P. */
+  desc := O.GetOwnProperty(P);
+
+  /** 2. If desc is not undefined, then: */
+  if (!(desc = undefined)) {
+    /** a. If IsAccessorDescriptor(desc) is true, then: */
+    if (IsAccessorPropertyDescriptor(desc)) {
+      /** i. If desc.[[Set]] is undefined, then return false. */
+      if (desc.Set = undefined) {
+        return false
+      }
+      /** ii. Else return true. */
+      else {
+        return true
+      };
+    }
+    /** b. Else, desc must be a DataDescriptor so return the value of desc.[[Writable]]. */
+    else if (IsDataPropertyDescriptor(desc)) {
+      return desc.Writable
+    };
+  };
+  /** 3. Let proto be the [[Prototype]] internal property of O. */
+  proto := O.Prototype;
+
+  /** 4. If proto is null, then return the value of the [[Extensible]] internal property of O. */
+  if (proto = null) {
+    return O.Extensible;
+  };
+
+  /** 5. Let inherited be the result of calling the [[GetProperty]] internal method of proto with property name P. */
+  inherited := proto.GetProperty(P);
+
+  /** 6. If inherited is undefined, return the value of the [[Extensible]] internal property of O. */
+  if (inherited = undefined) {
+    return O.Extensible
+  };
+
+  /** 7. If IsAccessorDescriptor(inherited) is true, then */
+  if (IsAccessorPropertyDescriptor(inherited)) {
+    /** a. If inherited.[[Set]] is undefined, then return false. */
+    if (inherited.Set = undefined) {
+      return false
+    }
+    /** b. Else return true. */
+    else {
+      return true
+    };
+  }
+  /** 8. Else, inherited must be a DataDescriptor */
+  else if (IsDataPropertyDescriptor(inherited)) {
+    /** a. If the [[Extensible]] internal property of O is false, return false. */
+    if (O.Extensible = false) {
+      return false
+    }
+    /** b. Else return the value of inherited.[[Writable]]. */
+    else {
+      return inherited.Writable
+    }
+  }
+  /** Host objects may define additional constraints upon [[Put]] operations.
+   * If possible, host objects should not allow [[Put]] operations in situations where this definition of [[CanPut]] returns false. */
+};
+
 
 function main () {
   loc1 := { };
