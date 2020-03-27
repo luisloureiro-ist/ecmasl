@@ -422,6 +422,69 @@ function CanPut(O, P) {
    * If possible, host objects should not allow [[Put]] operations in situations where this definition of [[CanPut]] returns false. */
 };
 
+/**
+ * 8.12.5 [[Put]] ( P, V, Throw )
+ *
+ * When the [[Put]] internal method of O is called with property P, value V, and Boolean flag Throw, the following steps are taken:
+ */
+function Put (O, P, V, Throw) {
+  /** 1. If the result of calling the [[CanPut]] internal method of O with argument P is false, then: */
+  if (O.CanPut(P) = false) {
+    /** a. If Throw is true, then throw a TypeError exception. */
+    if (Throw) {
+      throw TypeErrorException();
+    }
+    /** b. Else return. */
+    else {
+      return
+    };
+  };
+  /** 2. Let ownDesc be the result of calling the [[GetOwnProperty]] internal method of O with argument P. */
+  ownDesc := O.GetOwnProperty(P);
+
+  /** 3. If IsDataDescriptor(ownDesc) is true, then: */
+  if (IsDataPropertyDescriptor(ownDesc)) {
+    /** a. Let valueDesc be the Property Descriptor {[[Value]]: V}. */
+    valueDesc := {
+      Value: V
+    };
+    /** b. Call the [[DefineOwnProperty]] internal method of O passing P, valueDesc, and Throw as arguments. */
+    O.DefineOwnProperty(P, valueDesc, Throw);
+
+    /** c. Return. */
+    return
+  };
+
+  /** 4. Let desc be the result of calling the [[GetProperty]] internal method of O with argument P.
+   * This may be either an own or inherited accessor property descriptor or an inherited data property descriptor. */
+  desc := O.GetProperty(P);
+
+  /** 5. If IsAccessorDescriptor(desc) is true, then: */
+  if (IsAccessorPropertyDescriptor(desc)) {
+    /** a. Let setter be desc.[[Set]] which cannot be undefined. */
+    setter := desc.Set;
+
+    /** b. Call the [[Call]] internal method of setter providing O as the this value and providing V as the sole argument. */
+    setter.Call(O, V);
+  }
+  /** 6. Else, create a named data property named P on object O as follows */
+  else {
+    /** a. Let newDesc be the Property Descriptor {[[Value]]: V, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}. */
+    newDesc := {
+      Value: V,
+      Writable: true,
+      Enumerable: true,
+      Configurable: true
+    };
+
+    /** b. Call the [[DefineOwnProperty]] internal method of O passing P, newDesc, and Throw as arguments. */
+    O.DefineOwnProperty(P, newDesc, Throw);
+  };
+
+  /** 7. Return. */
+  return
+};
+
 
 function main () {
   loc1 := { };
