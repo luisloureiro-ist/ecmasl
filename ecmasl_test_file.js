@@ -485,6 +485,25 @@ function Put (O, P, V, Throw) {
   return
 };
 
+/**
+ * 8.12.6 [[HasProperty]] (P)
+ *
+ * When the [[HasProperty]] internal method of O is called with property name P, the following steps are taken:
+ */
+function HasProperty (O, P) {
+  /** 1. Let desc be the result of calling the [[GetProperty]] internal method of O with property name P. */
+  desc := O.GetProperty(P);
+
+  /** 2. If desc is undefined, then return false. */
+  if (desc = undefined) {
+    return false
+  }
+  /** 3. Else return true. */
+  else {
+    return true
+  };
+};
+
 
 function main () {
   loc1 := { };
