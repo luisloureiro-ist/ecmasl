@@ -504,6 +504,37 @@ function HasProperty (O, P) {
   };
 };
 
+/**
+ * 8.12.7 [[Delete]] (P, Throw)
+ *
+ * When the [[Delete]] internal method of O is called with property name P and the Boolean flag Throw, the following steps are taken:
+ */
+function Delete (O, P, Throw) {
+  /** 1. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with property name P. */
+  desc := O.GetOwnProperty(P);
+
+  /** 2. If desc is undefined, then return true. */
+  if (desc = undefined) {
+    return true
+  };
+
+  /** 3. If desc.[[Configurable]] is true, then */
+  if (desc.Configurable = true) {
+    /** a. Remove the own property with name P from O. */
+    delete O[P];
+
+    /** b. Return true. */
+    return true
+  }
+  /** 4. Else if Throw, then throw a TypeError exception. */
+  else if (Throw) {
+    throw TypeErrorException();
+  };
+
+  /** 5. Return false. */
+  return false
+};
+
 
 function main () {
   loc1 := { };
