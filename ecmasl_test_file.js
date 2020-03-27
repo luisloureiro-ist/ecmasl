@@ -535,6 +535,86 @@ function Delete (O, P, Throw) {
   return false
 };
 
+/**
+ * 8.12.8 [[DefaultValue]] (hint)
+ */
+function DefaultValue (O, hint) {
+  /** When the [[DefaultValue]] internal method of O is called with hint String, the following steps are taken: */
+  if (IsString(hint)) {
+    /** 1. Let toString be the result of calling the [[Get]] internal method of object O with argument "toString". */
+    toString:= O.Get("toString");
+
+    /** 2. If IsCallable(toString) is true then: */
+    if (IsCallable(toString)) {
+      /** a. Let str be the result of calling the [[Call]] internal method of toString, with O as the this value and an empty argument list. */
+      str:= toString.Call(O, []);
+
+      /** b. If str is a primitive value, return str. */
+      if (IsPrimitiveValue(str)) {
+        return str
+      };
+    };
+
+    /** 3. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
+    valueOf:= O.Get("valueOf");
+
+    /** 4. If IsCallable(valueOf) is true then: */
+    if (IsCallable(valueOf)) {
+      /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
+      val:= valueOf.Call(O, []);
+
+      /** b. If val is a primitive value, return val. */
+      if (IsPrimitiveValue(val)) {
+        return val
+      }
+    };
+
+    /** 5. Throw a TypeError exception. */
+    throw TypeErrorException()
+  }
+  /** When the [[DefaultValue]] internal method of O is called with hint Number, the following steps are taken: */
+  else if (IsNumber(hint)) {
+    /** 1. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
+    valueOf := O.Get("valueOf");
+
+    /** 2. If IsCallable(valueOf) is true then: */
+    if (IsCallable(valueOf)) {
+      /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
+      val := valueOf.Call(O, []);
+
+      /** b. If val is a primitive value, return val. */
+      if (IsPrimitiveValue(val)) {
+        return val
+      };
+    };
+
+    /** 3. Let toString be the result of calling the [[Get]] internal method of object O with argument "toString". */
+    toString := O.Get("toString");
+
+    /** 4. If IsCallable(toString) is true then: */
+    if (IsCallable(toString)) {
+      /** a. Let str be the result of calling the [[Call]] internal method of toString, with O as the this value and an empty argument list. */
+      str := toString.Call(O, []);
+
+      /** b. If str is a primitive value, return str. */
+      if (IsPrimitiveValue(str)) {
+        return str
+      };
+    };
+
+    /** 5. Throw a TypeError exception. */
+    throw TypeErrorException();
+  };
+
+/** When the [[DefaultValue]] internal method of O is called with no hint, then it behaves as if the hint were Number,
+ * unless O is a Date object (see 15.9.6), in which case it behaves as if the hint were String.
+ *
+ * The above specification of [[DefaultValue]] for native objects can return only primitive values.
+ * If a host object implements its own [[DefaultValue]] internal method,
+ * it must ensure that its [[DefaultValue]] internal method can return only primitive values.
+ */
+};
+
 
 function main () {
   loc1 := { };
