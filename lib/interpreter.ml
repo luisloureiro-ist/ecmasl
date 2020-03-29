@@ -82,13 +82,7 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
                                   let v = eval_expr prog heap sto e_v in
                                   Heap.set_field heap loc f v; None
                                  )
-  | FieldDelete (e, f)        -> (let loc =
-                                    (let loc = eval_expr prog heap sto e in
-                                     match loc with
-                                     | Loc loc -> loc
-                                     | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldDelete : \"e\" is not a Loc value") in
-                                  Heap.delete_field heap loc f; None
-                                 )
+  | FieldDelete (e, f)        -> eval_fielddelete_stmt prog heap sto e f
 
 
 and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
@@ -100,6 +94,15 @@ and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (E
                     else eval_stmt prog heap sto (If rest))
     | None, s   -> eval_stmt prog heap sto s
 
+and eval_fielddelete_stmt (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) (f : Expr.t) =
+  let loc = eval_expr prog heap sto e and field = eval_expr prog heap sto f in
+  let loc' = (match loc with
+      | Loc loc -> loc
+      | _ -> invalid_arg "Exception in Interpreter.eval_fielddelete_stmt : \"e\" is not a Loc value") in
+  let field' = (match field with
+      | Str field -> field
+      | _         -> invalid_arg "Exception in Interpreter.eval_fielddelete_stmt : \"f\" didn't evaluate to Str") in
+  Heap.delete_field heap loc' field'; None
 
 and eval_proc (prog : Prog.t) (heap : Heap.t) (pname : string) (args : Val.t list) : Val.t * Store.t =
   let func = Prog.get_func prog pname in

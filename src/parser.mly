@@ -120,8 +120,10 @@ fv_target:
 stmt_target:
   | e1 = VAR; PERIOD; f = VAR; DEFEQ; e2 = expr_target;
     { Stmt.FieldAssign (Expr.Var e1, f, e2) }
-  | DELETE; e = VAR; f = VAR;
-    { Stmt.FieldDelete (Expr.Var e, f) }
+  | DELETE; e = expr_target; PERIOD; f = VAR;
+    { Stmt.FieldDelete (e, Expr.Val (Str f)) }
+  | DELETE; e = expr_target; LBRACK; f = expr_target; RBRACK;
+    { Stmt.FieldDelete (e, f) }
   | SKIP;
     { Stmt.Skip }
   | v = VAR; DEFEQ; e = expr_target;

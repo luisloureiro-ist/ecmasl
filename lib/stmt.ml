@@ -7,7 +7,7 @@ type t = Skip
        | While       of Expr.t * t
        | Return      of Expr.t
        | FieldAssign of Expr.t * Field.t * Expr.t
-       | FieldDelete of Expr.t * Field.t
+       | FieldDelete of Expr.t * Expr.t
 
 let rec str (stmt : t) : string = match stmt with
     Skip                      -> ""
@@ -17,7 +17,7 @@ let rec str (stmt : t) : string = match stmt with
   | While (exp, s)            -> "while (" ^ (Expr.str exp) ^ ") { " ^ (str s) ^ " }"
   | Return exp                -> "return " ^ (Expr.str exp) ^ ";"
   | FieldAssign (e_o, f, e_v) -> Expr.str e_o ^ "." ^ Field.str f ^ " = " ^ Expr.str e_v
-  | FieldDelete (e, f)        -> "delete " ^ Expr.str e ^ "." ^ Field.str f
+  | FieldDelete (e, f)        -> "delete " ^ Expr.str e ^ "[" ^ Expr.str f ^ "]"
 
 and build_ifelse (exp_stmt : Expr.t option * t) : string =
   match exp_stmt with
