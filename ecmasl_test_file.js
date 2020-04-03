@@ -1,7 +1,12 @@
+function NewObject () {
+  return {}
+};
 
 function NewPropertyDescriptor() {
   return {}
 };
+
+
 /**
  * 8.10 The Property Descriptor and Property Identifier Specification Types
  *
@@ -103,13 +108,13 @@ function FromPropertyDescriptor (Desc) {
   };
 
   /** 2. Let obj be the result of creating a new object as if by the expression new Object() where Object is the standard built-in constructor with that name. */
-  obj := new Object();
+  obj := NewObject();
 
   /** 3. If IsDataDescriptor(Desc) is true, then: */
   if (IsDataPropertyDescriptor(Desc)) {
     /** a. Call the [[DefineOwnProperty]] internal method of obj with arguments "value",
      *  Property Descriptor {[[Value]]: Desc.[[Value]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-    obj.DefineOwnProperty("value", {
+    DefineOwnProperty(obj, "value", {
       Value: Desc.Value,
       Writable: true,
       Enumerable: true,
@@ -117,7 +122,7 @@ function FromPropertyDescriptor (Desc) {
     }, false);
     /** b. Call the [[DefineOwnProperty]] internal method of obj with arguments "writable",
      *  Property Descriptor {[[Value]]: Desc.[[Writable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-    obj.DefineOwnProperty("writable", {
+    DefineOwnProperty(obj, "writable", {
       Value: Desc.Writable,
       Writable: true,
       Enumerable: true,
@@ -128,7 +133,7 @@ function FromPropertyDescriptor (Desc) {
   else if (IsAccessorPropertyDescriptor(Desc)) {
     /** a. Call the [[DefineOwnProperty]] internal method of obj with arguments "get",
      *  Property Descriptor {[[Value]]: Desc.[[Get]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-    obj.DefineOwnProperty("get", {
+    DefineOwnProperty(obj, "get", {
       Value: Desc.Get,
       Writable: true,
       Enumerable: true,
@@ -136,7 +141,7 @@ function FromPropertyDescriptor (Desc) {
     }, false);
     /** b. Call the [[DefineOwnProperty]] internal method of obj with arguments "set",
      *  Property Descriptor {[[Value]]: Desc.[[Set]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-    obj.DefineOwnProperty("set", {
+    DefineOwnProperty(obj, "set", {
       Value: Desc.Set,
       Writable: true,
       Enumerable: true,
@@ -146,7 +151,7 @@ function FromPropertyDescriptor (Desc) {
 
   /** 5. Call the [[DefineOwnProperty]] internal method of obj with arguments "enumerable",
    *  Property Descriptor {[[Value]]: Desc.[[Enumerable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-  obj.DefineOwnProperty("enumerable", {
+  DefineOwnProperty(obj, "enumerable", {
     Value: Desc.Enumerable,
     Writable: true,
     Enumerable: true,
@@ -155,7 +160,7 @@ function FromPropertyDescriptor (Desc) {
 
   /** 6. Call the [[DefineOwnProperty]] internal method of obj with arguments "configurable",
    *    Property Descriptor {[[Value]]: Desc.[[Configurable]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
-  obj.DefineOwnProperty("configurable", {
+  DefineOwnProperty(obj, "configurable", {
     Value: Desc.Configurable,
     Writable: true,
     Enumerable: true,
@@ -182,41 +187,41 @@ function ToPropertyDescriptor (Obj) {
   desc := NewPropertyDescriptor();
 
   /** 3. If the result of calling the [[HasProperty]] internal method of Obj with argument "enumerable" is true, then: */
-  if (Obj.HasProperty("enumerable")) {
+  if (HasProperty(Obj, "enumerable")) {
     /** a. Let enum be the result of calling the [[Get]] internal method of Obj with "enumerable". */
-    enum := Obj.Get("enumerable");
+    enum := Get(Obj, "enumerable");
     /** b. Set the [[Enumerable]] field of desc to ToBoolean(enum). */
     desc.Enumerable := ToBoolean(enum);
   };
 
   /** 4. If the result of calling the [[HasProperty]] internal method of Obj with argument "configurable" is true, then: */
-  if (Obj.HasProperty("configurable")) {
+  if (HasProperty(Obj, "configurable")) {
     /** a. Let conf be the result of calling the [[Get]] internal method of Obj with argument "configurable". */
-    conf := Obj.Get("configurable");
+    conf:= Get(Obj, "configurable");
     /** b. Set the [[Configurable]] field of desc to ToBoolean(conf). */
     desc.Configurable := ToBoolean(conf);
   };
 
   /** 5. If the result of calling the [[HasProperty]] internal method of Obj with argument "value" is true, then: */
-  if (Obj.HasProperty("value")) {
+  if (HasProperty(Obj, "value")) {
     /** a. Let value be the result of calling the [[Get]] internal method of Obj with argument “value”. */
-    value := Obj.Get("value");
+    value := Get(Obj, "value");
     /** b. Set the [[Value]] field of desc to value. */
     desc.Value := value;
   };
 
   /** 6. If the result of calling the [[HasProperty]] internal method of Obj with argument "writable" is true, then: */
-  if (Obj.HasProperty("writable")) {
+  if (HasProperty(Obj, "writable")) {
     /** a. Let writable be the result of calling the [[Get]] internal method of Obj with argument "writable". */
-    writable := Obj.Get("writable");
+    writable := Get(Obj, "writable");
     /** b. Set the [[Writable]] field of desc to ToBoolean(writable). */
     desc.Writable := ToBoolean(writable);
   };
 
   /** 7. If the result of calling the [[HasProperty]] internal method of Obj with argument "get" is true, then: */
-  if (Obj.HasProperty("get")) {
+  if (HasProperty(Obj, "get")) {
     /** a. Let getter be the result of calling the [[Get]] internal method of Obj with argument "get". */
-    getter := Obj.Get("get");
+    getter := Get(Obj, "get");
     /** b. If IsCallable(getter) is false and getter is not undefined, then throw a TypeError exception. */
     if (IsCallable(getter) = false && !(getter = undefined)) {
       throw TypeErrorException();
@@ -226,9 +231,9 @@ function ToPropertyDescriptor (Obj) {
   };
 
   /** 8. If the result of calling the [[HasProperty]] internal method of Obj with argument "set" is true, then: */
-  if (Obj.HasProperty("set")) {
+  if (HasProperty(Obj, "set")) {
     /** a. Let setter be the result of calling the [[Get]] internal method of Obj with argument "set". */
-    setter := Obj.Get("set");
+    setter := Get(Obj, "set");
     /** b. If IsCallable(setter) is false and setter is not undefined, then throw a TypeError exception. */
     if (IsCallable(setter) = false && !(setter = undefined)) {
       throw TypeErrorException();
@@ -267,9 +272,9 @@ function GetOwnProperty(O, P) {
   };
 
   /** 2. Let D be a newly created Property Descriptor with no fields. */
-  D:= NewPropertyDescriptor();
+  D := NewPropertyDescriptor();
   /** 3. Let X be O’s own property named P. */
-  X:= O[P];
+  X := O[P];
 
   /** 4. If X is a data property, then: */
   if (IsDataPropertyDescriptor(X)) {
@@ -302,7 +307,7 @@ function GetOwnProperty(O, P) {
  */
 function GetProperty (O, P) {
   /** 1. Let prop be the result of calling the [[GetOwnProperty]] internal method of O with property name P. */
-  prop := O.GetOwnProperty(P);
+  prop := GetOwnProperty(O, P);
 
   /** 2. If prop is not undefined, return prop. */
   if (!(prop = undefined)) {
@@ -318,7 +323,7 @@ function GetProperty (O, P) {
   };
 
   /** 5. Return the result of calling the [[GetProperty]] internal method of proto with argument P. */
-  return proto.GetProperty(P)
+  return GetProperty(proto, P)
 };
 
 /**
@@ -328,7 +333,7 @@ function GetProperty (O, P) {
  */
 function Get(O, P) {
   /** 1. Let desc be the result of calling the [[GetProperty]] internal method of O with property name P. */
-  desc := O.GetProperty(P);
+  desc := GetProperty(O, P);
 
   /** 2. If desc is undefined, return undefined. */
   if (desc = undefined) {
@@ -349,7 +354,7 @@ function Get(O, P) {
     };
 
     /** 6. Return the result calling the[[Call]] internal method of getter providing O as the this value and providing no arguments. */
-    return getter.Call(O)
+    return Call(getter, O)
   }
 };
 
@@ -360,7 +365,7 @@ function Get(O, P) {
  */
 function CanPut(O, P) {
   /** 1. Let desc be the result of calling the[[GetOwnProperty]] internal method of O with argument P. */
-  desc := O.GetOwnProperty(P);
+  desc := GetOwnProperty(O, P);
 
   /** 2. If desc is not undefined, then: */
   if (!(desc = undefined)) {
@@ -389,7 +394,7 @@ function CanPut(O, P) {
   };
 
   /** 5. Let inherited be the result of calling the [[GetProperty]] internal method of proto with property name P. */
-  inherited := proto.GetProperty(P);
+  inherited := GetProperty(proto, P);
 
   /** 6. If inherited is undefined, return the value of the [[Extensible]] internal property of O. */
   if (inherited = undefined) {
@@ -429,7 +434,7 @@ function CanPut(O, P) {
  */
 function Put (O, P, V, Throw) {
   /** 1. If the result of calling the [[CanPut]] internal method of O with argument P is false, then: */
-  if (O.CanPut(P) = false) {
+  if (CanPut(O, P) = false) {
     /** a. If Throw is true, then throw a TypeError exception. */
     if (Throw) {
       throw TypeErrorException();
@@ -440,7 +445,7 @@ function Put (O, P, V, Throw) {
     };
   };
   /** 2. Let ownDesc be the result of calling the [[GetOwnProperty]] internal method of O with argument P. */
-  ownDesc := O.GetOwnProperty(P);
+  ownDesc := GetOwnProperty(O, P);
 
   /** 3. If IsDataDescriptor(ownDesc) is true, then: */
   if (IsDataPropertyDescriptor(ownDesc)) {
@@ -449,15 +454,15 @@ function Put (O, P, V, Throw) {
       Value: V
     };
     /** b. Call the [[DefineOwnProperty]] internal method of O passing P, valueDesc, and Throw as arguments. */
-    O.DefineOwnProperty(P, valueDesc, Throw);
+    DefineOwnProperty(O, P, valueDesc, Throw);
 
     /** c. Return. */
     return
   };
 
   /** 4. Let desc be the result of calling the [[GetProperty]] internal method of O with argument P.
-   * This may be either an own or inherited accessor property descriptor or an inherited data property descriptor. */
-  desc := O.GetProperty(P);
+   *     This may be either an own or inherited accessor property descriptor or an inherited data property descriptor. */
+  desc := GetProperty(O, P);
 
   /** 5. If IsAccessorDescriptor(desc) is true, then: */
   if (IsAccessorPropertyDescriptor(desc)) {
@@ -465,7 +470,7 @@ function Put (O, P, V, Throw) {
     setter := desc.Set;
 
     /** b. Call the [[Call]] internal method of setter providing O as the this value and providing V as the sole argument. */
-    setter.Call(O, V);
+    Call(setter, O, V);
   }
   /** 6. Else, create a named data property named P on object O as follows */
   else {
@@ -478,7 +483,7 @@ function Put (O, P, V, Throw) {
     };
 
     /** b. Call the [[DefineOwnProperty]] internal method of O passing P, newDesc, and Throw as arguments. */
-    O.DefineOwnProperty(P, newDesc, Throw);
+    DefineOwnProperty(O, P, newDesc, Throw);
   };
 
   /** 7. Return. */
@@ -492,7 +497,7 @@ function Put (O, P, V, Throw) {
  */
 function HasProperty (O, P) {
   /** 1. Let desc be the result of calling the [[GetProperty]] internal method of O with property name P. */
-  desc := O.GetProperty(P);
+  desc := GetProperty(O, P);
 
   /** 2. If desc is undefined, then return false. */
   if (desc = undefined) {
@@ -511,7 +516,7 @@ function HasProperty (O, P) {
  */
 function Delete (O, P, Throw) {
   /** 1. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with property name P. */
-  desc := O.GetOwnProperty(P);
+  desc := GetOwnProperty(O, P);
 
   /** 2. If desc is undefined, then return true. */
   if (desc = undefined) {
@@ -542,12 +547,12 @@ function DefaultValue (O, hint) {
   /** When the [[DefaultValue]] internal method of O is called with hint String, the following steps are taken: */
   if (IsString(hint)) {
     /** 1. Let toString be the result of calling the [[Get]] internal method of object O with argument "toString". */
-    toString:= O.Get("toString");
+    toString := Get(O, "toString");
 
     /** 2. If IsCallable(toString) is true then: */
     if (IsCallable(toString)) {
       /** a. Let str be the result of calling the [[Call]] internal method of toString, with O as the this value and an empty argument list. */
-      str:= toString.Call(O, []);
+      str := Call(toString, O, []);
 
       /** b. If str is a primitive value, return str. */
       if (IsPrimitiveValue(str)) {
@@ -556,12 +561,12 @@ function DefaultValue (O, hint) {
     };
 
     /** 3. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
-    valueOf:= O.Get("valueOf");
+    valueOf := Get(O, "valueOf");
 
     /** 4. If IsCallable(valueOf) is true then: */
     if (IsCallable(valueOf)) {
       /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
-      val:= valueOf.Call(O, []);
+      val := Call(valueOf, O, "");
 
       /** b. If val is a primitive value, return val. */
       if (IsPrimitiveValue(val)) {
@@ -575,12 +580,12 @@ function DefaultValue (O, hint) {
   /** When the [[DefaultValue]] internal method of O is called with hint Number, the following steps are taken: */
   else if (IsNumber(hint)) {
     /** 1. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
-    valueOf := O.Get("valueOf");
+    valueOf := Get(O, "valueOf");
 
     /** 2. If IsCallable(valueOf) is true then: */
     if (IsCallable(valueOf)) {
       /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
-      val := valueOf.Call(O, []);
+      val := Call(valueOf, O, "");
 
       /** b. If val is a primitive value, return val. */
       if (IsPrimitiveValue(val)) {
@@ -589,12 +594,12 @@ function DefaultValue (O, hint) {
     };
 
     /** 3. Let toString be the result of calling the [[Get]] internal method of object O with argument "toString". */
-    toString := O.Get("toString");
+    toString := Get(O, "toString");
 
     /** 4. If IsCallable(toString) is true then: */
     if (IsCallable(toString)) {
       /** a. Let str be the result of calling the [[Call]] internal method of toString, with O as the this value and an empty argument list. */
-      str := toString.Call(O, []);
+      str := Call(toString, O, "");
 
       /** b. If str is a primitive value, return str. */
       if (IsPrimitiveValue(str)) {
