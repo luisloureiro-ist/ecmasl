@@ -4,6 +4,7 @@ type t =
   | Bool  of bool
   | Str   of string
   | Loc   of Loc.t
+  | Void
   | Undef
 
 let neg (v : t) : t = match v with
@@ -13,6 +14,7 @@ let neg (v : t) : t = match v with
   | Str v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to string type argument"
   | Loc v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Loc type argument"
   | Undef  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to undefined type argument"
+  | Void  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to void type argument"
 
 let not (v : t) : t = match v with
   | Bool v -> Bool (v = false)
@@ -75,3 +77,4 @@ let str (v : t) : string = match v with
   | Str v  -> "\"" ^ v ^ "\""
   | Loc v  -> Loc.str v
   | Undef  -> "undefined"
+  | Void   -> ""

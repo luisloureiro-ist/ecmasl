@@ -116,7 +116,7 @@ fv_target:
   | f = VAR; COLON; e = expr_target;
     { (f, e) }
 
-(* s ::= e.f := e | delete e.f | skip | x := e | s1, s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e *)
+(* s ::= e.f := e | delete e.f | skip | x := e | s1; s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e | return *)
 stmt_target:
   | e1 = VAR; PERIOD; f = VAR; DEFEQ; e2 = expr_target;
     { Stmt.FieldAssign (Expr.Var e1, f, e2) }
@@ -135,6 +135,9 @@ stmt_target:
   | WHILE; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
     { Stmt.While (e, s) }
   | RETURN; e = expr_target;
+    { Stmt.Return e }
+  | RETURN;
+    { Stmt.Return (Expr.Val Val.Void) }
   | e = expr_target;
     { Stmt.ExprStmt e }
 
