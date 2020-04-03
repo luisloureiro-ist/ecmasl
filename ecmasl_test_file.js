@@ -43,7 +43,7 @@ function IsAccessorPropertyDescriptor (Desc) {
   };
 
   /** 2. If both Desc.[[Get]] and Desc.[[Set]] are absent, then return false. */
-  if (!(("Get" in Desc) && ("Set" in Desc))) {
+  if (!("Get" in Desc) && !("Set" in Desc)) {
     return false
   };
 
@@ -62,7 +62,7 @@ function IsDataPropertyDescriptor (Desc) {
     return false
   };
   /** 2. If both Desc.[[Value]] and Desc.[[Writable]] are absent, then return false. */
-  if (!(("Value" in Desc) && ("Writable" in Desc))) {
+  if (!("Value" in Desc) && !("Writable" in Desc)) {
     return false
   };
 
