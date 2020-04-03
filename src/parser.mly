@@ -135,7 +135,8 @@ stmt_target:
   | WHILE; LPAREN; e = expr_target; RPAREN; LBRACE; s = stmt_target; RBRACE;
     { Stmt.While (e, s) }
   | RETURN; e = expr_target;
-    { Stmt.Return e }
+  | e = expr_target;
+    { Stmt.ExprStmt e }
 
 (* if (e) { s } | else if (e) { s } | else { s } *)
 ifelse_target:
