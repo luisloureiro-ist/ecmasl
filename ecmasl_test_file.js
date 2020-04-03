@@ -169,7 +169,7 @@ function FromPropertyDescriptor (Desc) {
 
    /** 7. Return obj. */
    return obj
-}
+};
 
 
 /**
@@ -179,7 +179,7 @@ function FromPropertyDescriptor (Desc) {
  */
 function ToPropertyDescriptor (Obj) {
   /** 1. If Type(Obj) is not Object throw a TypeError exception. */
-  if (Type(Obj) != Object) {
+  if (!(Type(Obj) = Object)) {
     throw TypeErrorException();
   };
 
@@ -252,7 +252,7 @@ function ToPropertyDescriptor (Obj) {
 
   /** 10. Return desc. */
   return desc
-}
+};
 
 /**
  * 8.12 Algorithms for Object Internal Methods
