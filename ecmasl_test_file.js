@@ -6,6 +6,11 @@ function NewPropertyDescriptor() {
   return {}
 };
 
+function TypeErrorException() {
+  return {
+    exception: "TypeError"
+  }
+};
 
 /**
  * 8.10 The Property Descriptor and Property Identifier Specification Types
@@ -171,7 +176,6 @@ function FromPropertyDescriptor (Desc) {
    return obj
 };
 
-
 /**
  * 8.10.5 ToPropertyDescriptor ( Obj )
  *
@@ -180,7 +184,7 @@ function FromPropertyDescriptor (Desc) {
 function ToPropertyDescriptor (Obj) {
   /** 1. If Type(Obj) is not Object throw a TypeError exception. */
   if (!(Type(Obj) = Object)) {
-    throw TypeErrorException();
+    return TypeErrorException();
   };
 
   /** 2. Let desc be the result of creating a new Property Descriptor that initially has no fields. */
@@ -224,7 +228,7 @@ function ToPropertyDescriptor (Obj) {
     getter := Get(Obj, "get");
     /** b. If IsCallable(getter) is false and getter is not undefined, then throw a TypeError exception. */
     if (IsCallable(getter) = false && !(getter = undefined)) {
-      throw TypeErrorException();
+      return TypeErrorException();
     };
     /** c. Set the [[Get]] field of desc to getter. */
     desc.Get := getter;
@@ -236,17 +240,17 @@ function ToPropertyDescriptor (Obj) {
     setter := Get(Obj, "set");
     /** b. If IsCallable(setter) is false and setter is not undefined, then throw a TypeError exception. */
     if (IsCallable(setter) = false && !(setter = undefined)) {
-      throw TypeErrorException();
-    }
+      return TypeErrorException();
+    };
     /** c. Set the [[Set]] field of desc to setter. */
     desc.Set := setter;
   };
 
   /** 9. If either desc.[[Get]] or desc.[[Set]] are present, then: */
-  if ("Get" in desc || "Set" in desc) {
+  if (("Get" in desc) || ("Set" in desc)) {
     /** a. If either desc.[[Value]] or desc.[[Writable]] are present, then throw a TypeError exception. */
-    if ("Value" in desc || "Writable" in desc) {
-      throw TypeErrorException();
+    if (("Value" in desc) || ("Writable" in desc)) {
+      return TypeErrorException();
     }
   };
 
@@ -424,7 +428,7 @@ function CanPut(O, P) {
     }
   }
   /** Host objects may define additional constraints upon [[Put]] operations.
-   * If possible, host objects should not allow [[Put]] operations in situations where this definition of [[CanPut]] returns false. */
+   *  If possible, host objects should not allow [[Put]] operations in situations where this definition of [[CanPut]] returns false. */
 };
 
 /**
@@ -437,7 +441,7 @@ function Put (O, P, V, Throw) {
   if (CanPut(O, P) = false) {
     /** a. If Throw is true, then throw a TypeError exception. */
     if (Throw) {
-      throw TypeErrorException();
+      return TypeErrorException();
     }
     /** b. Else return. */
     else {
@@ -533,7 +537,7 @@ function Delete (O, P, Throw) {
   }
   /** 4. Else if Throw, then throw a TypeError exception. */
   else if (Throw) {
-    throw TypeErrorException();
+    return TypeErrorException();
   };
 
   /** 5. Return false. */
@@ -575,7 +579,7 @@ function DefaultValue (O, hint) {
     };
 
     /** 5. Throw a TypeError exception. */
-    throw TypeErrorException()
+    return TypeErrorException()
   }
   /** When the [[DefaultValue]] internal method of O is called with hint Number, the following steps are taken: */
   else if (IsNumber(hint)) {
@@ -608,7 +612,7 @@ function DefaultValue (O, hint) {
     };
 
     /** 5. Throw a TypeError exception. */
-    throw TypeErrorException();
+    return TypeErrorException();
   };
 
 /** When the [[DefaultValue]] internal method of O is called with no hint, then it behaves as if the hint were Number,
