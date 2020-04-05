@@ -636,37 +636,40 @@ function main () {
 };
 
 function testPropertyDescriptor() {
-  loc1:= {};
-  loc2:= NewPropertyDescriptor();
+  loc1 := {};
+  loc2 := NewPropertyDescriptor();
 
+  /* loc1 must be generic */
   loc1.accessor := IsAccessorPropertyDescriptor(loc2);
-  loc1.data := IsDataPropertyDescriptor(loc2);
-  loc1.generic := IsGenericPropertyDescriptor(loc2);
+  loc1.data     := IsDataPropertyDescriptor(loc2);
+  loc1.generic  := IsGenericPropertyDescriptor(loc2);
 
-  loc3:= {};
-  loc4:= NewPropertyDescriptor();
+  loc3 := {};
+  loc4 := NewPropertyDescriptor();
   loc4.Set := { };
   loc4.Get := { };
 
+  /* loc3 must be accessor */
   loc3.accessor := IsAccessorPropertyDescriptor(loc4);
-  loc3.data := IsDataPropertyDescriptor(loc4);
-  loc3.generic := IsGenericPropertyDescriptor(loc4);
+  loc3.data     := IsDataPropertyDescriptor(loc4);
+  loc3.generic  := IsGenericPropertyDescriptor(loc4);
 
-  loc7:= {};
-  loc8:= NewPropertyDescriptor();
+  loc7 := {};
+  loc8 := NewPropertyDescriptor();
   loc8.Value := 123;
   loc8.Writable := false;
 
+  /* loc7 must be data */
   loc7.accessor := IsAccessorPropertyDescriptor(loc8);
-  loc7.data := IsDataPropertyDescriptor(loc8);
-  loc7.generic := IsGenericPropertyDescriptor(loc8);
+  loc7.data     := IsDataPropertyDescriptor(loc8);
+  loc7.generic  := IsGenericPropertyDescriptor(loc8);
 
   return
 };
 
 function testObjectInternalMethods() {
-  loc9:= {};
-  loc10:= {
+  loc9  := {};
+  loc10 := {
     genericProp: {
       Configurable: false,
       Enumerable: false
@@ -684,8 +687,8 @@ function testObjectInternalMethods() {
   };
 
   loc9.accessor := GetOwnProperty(loc10, "accessorProp");
-  loc9.data := GetOwnProperty(loc10, "dataProp");
-  loc9.generic := GetOwnProperty(loc10, "genericProp");
+  loc9.data     := GetOwnProperty(loc10, "dataProp");
+  loc9.generic  := GetOwnProperty(loc10, "genericProp");
 
   return
 }
