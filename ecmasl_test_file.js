@@ -135,7 +135,7 @@ function FromPropertyDescriptor (Desc) {
     }, false);
   }
   /** 4. Else, IsAccessorDescriptor(Desc) must be true, so: */
-  else if (IsAccessorPropertyDescriptor(Desc)) {
+  else {
     /** a. Call the [[DefineOwnProperty]] internal method of obj with arguments "get",
      *  Property Descriptor {[[Value]]: Desc.[[Get]], [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false. */
     DefineOwnProperty(obj, "get", {
@@ -288,7 +288,7 @@ function GetOwnProperty(O, P) {
     D.Writable := X.Writable;
   }
   /** 5. Else X is an accessor property, so: */
-  else if (IsAccessorPropertyDescriptor(X)) {
+  else {
     /** a. Set D.[[Get]] to the value of X’s [[Get]] attribute. */
     D.Get := X.Get;
     /** b. Set D.[[Set]] to the value of X’s [[Set]] attribute. */
@@ -349,7 +349,7 @@ function Get(O, P) {
     return desc.Value
   }
   /** 4. Otherwise, IsAccessorDescriptor(desc) must be true so, let getter be desc.[[Get]]. */
-  else if (IsAccessorPropertyDescriptor(desc)) {
+  else {
     getter := desc.Get;
 
     /** 5. If getter is undefined, return undefined. */
@@ -385,7 +385,7 @@ function CanPut(O, P) {
       };
     }
     /** b. Else, desc must be a DataDescriptor so return the value of desc.[[Writable]]. */
-    else if (IsDataPropertyDescriptor(desc)) {
+    else {
       return desc.Writable
     };
   };
@@ -676,7 +676,9 @@ function testObjectInternalMethods() {
     },
     dataProp: {
       Value: "data",
-      Writable: true
+      Writable: true,
+      Configurable: false,
+      Enumerable: false
     },
     accessorProp: {
       Get: {},
