@@ -88,7 +88,7 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
                                   Heap.set_field heap loc f v; None
                                  )
   | FieldDelete (e, f)        -> eval_fielddelete_stmt prog heap sto e f
-  | ExprStmt e                -> Some (eval_expr e)
+  | ExprStmt e                -> ignore (eval_expr prog heap sto e); None
 
 
 and eval_if_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (exps_stmts : (Expr.t option * Stmt.t) list) : Val.t option =
