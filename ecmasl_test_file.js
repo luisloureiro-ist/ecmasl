@@ -670,10 +670,6 @@ function testPropertyDescriptor() {
 function testObjectInternalMethods() {
   loc9  := {};
   loc10 := {
-    genericProp: {
-      Configurable: false,
-      Enumerable: false
-    },
     dataProp: {
       Value: "data",
       Writable: true,
@@ -690,7 +686,6 @@ function testObjectInternalMethods() {
 
   loc9.accessor := GetOwnProperty(loc10, "accessorProp");
   loc9.data     := GetOwnProperty(loc10, "dataProp");
-  loc9.generic  := GetOwnProperty(loc10, "genericProp");
 
   return
 }
