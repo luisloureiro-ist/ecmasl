@@ -24,6 +24,11 @@
 %token <string> STRING
 %token LOG_AND LOG_OR
 %token PLUS MINUS TIMES DIVIDE EQUAL GT LT EGT ELT IN NOT
+%token TYPEOF
+%token INT_TYPE
+%token FLT_TYPE
+%token STR_TYPE
+%token BOOL_TYPE
 %token EOF
 
 %left LOG_AND LOG_OR
@@ -74,6 +79,16 @@ proc_target:
     to produce values that are attached to the nonterminal in the rule.
 *)
 
+type_target:
+  | INT_TYPE;
+    { Type.IntType }
+  | FLT_TYPE;
+    { Type.FltType }
+  | STR_TYPE;
+    { Type.StrType }
+  | BOOL_TYPE;
+    { Type.BoolType }
+
 (* v ::= f | i | b | s *)
 val_target:
   | UNDEFINED;
@@ -88,6 +103,8 @@ val_target:
     { let len = String.length s in
       let sub = String.sub s 1 (len - 2) in
       Val.Str sub } (* Remove the double-quote characters from the parsed string *)
+  | t = type_target;
+    { Val.Type t }
 
 (* e ::= {} | {f:e} | e.f | e[f] | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
@@ -105,6 +122,8 @@ expr_target:
     { Expr.UnOpt (Expr.Neg, e) } %prec unopt_prec
   | NOT; e = expr_target;
     { Expr.UnOpt (Expr.Not, e) } %prec unopt_prec
+  | TYPEOF; e = expr_target;
+    { Expr.UnOpt (Expr.Typeof, e) } %prec unopt_prec
   | e1 = expr_target; bop = op_target; e2 = expr_target;
     { Expr.BinOpt (bop, e1, e2) } %prec binopt_prec
   | f = expr_target; LPAREN; es = separated_list (COMMA, expr_target); RPAREN;

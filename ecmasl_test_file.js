@@ -549,7 +549,7 @@ function Delete (O, P, Throw) {
  */
 function DefaultValue (O, hint) {
   /** When the [[DefaultValue]] internal method of O is called with hint String, the following steps are taken: */
-  if (IsString(hint)) {
+  if (typeof hint = __$string) {
     /** 1. Let toString be the result of calling the [[Get]] internal method of object O with argument "toString". */
     toString := Get(O, "toString");
 
@@ -582,7 +582,7 @@ function DefaultValue (O, hint) {
     return TypeErrorException()
   }
   /** When the [[DefaultValue]] internal method of O is called with hint Number, the following steps are taken: */
-  else if (IsNumber(hint)) {
+  else if (typeof hint = __$int || typeof hint = __$float) {
     /** 1. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
     valueOf := Get(O, "valueOf");
 

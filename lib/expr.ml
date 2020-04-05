@@ -13,6 +13,7 @@ type bopt = Plus
 
 type uopt = Neg
           | Not
+          | Typeof
 
 type t = Val    of Val.t
        | Var    of string
@@ -23,8 +24,9 @@ type t = Val    of Val.t
        | Access of t * t
 
 let str_of_unopt (op : uopt) : string = match op with
-  | Neg -> "-"
-  | Not -> "!"
+  | Neg    -> "-"
+  | Not    -> "!"
+  | Typeof -> "typeof"
 
 let str_of_binopt (op : bopt) : string = match op with
   | Plus    -> "+"

@@ -4,6 +4,7 @@ type t =
   | Bool  of bool
   | Str   of string
   | Loc   of Loc.t
+  | Type  of Type.t
   | Void
   | Undef
 
@@ -13,8 +14,9 @@ let neg (v : t) : t = match v with
   | Bool v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to boolean type argument"
   | Str v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to string type argument"
   | Loc v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Loc type argument"
+  | Type v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Type type argument"
   | Undef  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to undefined type argument"
-  | Void  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to void type argument"
+  | Void   -> invalid_arg "Exception in Val.neg: this operation doesn't apply to void type argument"
 
 let not (v : t) : t = match v with
   | Bool v -> Bool (v = false)
@@ -70,11 +72,21 @@ let is_true (v : t) : bool = match v with
   | Bool v -> v
   | _      -> invalid_arg "Exception in Val.is_true: argument is not boolean"
 
+let typeof (v : t) : t = match v with
+  | Int v  -> Type (Type.IntType)
+  | Flt v  -> Type (Type.FltType)
+  | Str v  -> Type (Type.StrType)
+  | Bool v -> Type (Type.BoolType)
+  | Loc v  -> invalid_arg "Exception in Val.typeof: not implemented for Loc type argument"
+  | Type v -> invalid_arg "Exception in Val.typeof: not implemented for Type type argument"
+  | _      -> invalid_arg "Exception in Val.typeof: invalid argument"
+
 let str (v : t) : string = match v with
   | Flt v  -> string_of_float v
   | Int v  -> string_of_int v
   | Bool v -> string_of_bool v
   | Str v  -> "\"" ^ v ^ "\""
   | Loc v  -> Loc.str v
+  | Type v -> Type.str v
   | Undef  -> "undefined"
   | Void   -> ""

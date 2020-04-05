@@ -43,47 +43,52 @@ let newline = '\r'|'\n'|"\r\n"
 *)
 rule read =
   parse
-  | white       { read lexbuf }
-  | newline     { read lexbuf }
-  | ":="        { DEFEQ }
-  | '.'         { PERIOD }
-  | ';'         { SEMICOLON }
-  | ':'         { COLON }
-  | ','         { COMMA }
-  | '+'         { PLUS }
-  | '-'         { MINUS }
-  | '*'         { TIMES }
-  | '/'         { DIVIDE }
-  | '='         { EQUAL }
-  | '>'         { GT }
-  | '<'         { LT }
-  | ">="        { EGT }
-  | "<="        { ELT }
-  | "in"        { IN }
-  | '!'         { NOT }
-  | "&&"        { LOG_AND }
-  | "||"        { LOG_OR }
-  | '('         { LPAREN }
-  | ')'         { RPAREN }
-  | '{'         { LBRACE }
-  | '}'         { RBRACE }
-  | '['         { LBRACK }
-  | ']'         { RBRACK }
-  | "if"        { IF }
-  | "else"      { ELSE }
-  | "while"     { WHILE }
-  | "return"    { RETURN }
-  | "function"  { FUNCTION }
-  | "delete"    { DELETE }
-  | "undefined" { UNDEFINED }
-  | int         { INT (int_of_string (Lexing.lexeme lexbuf)) }
-  | float       { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
-  | bool        { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
-  | string      { STRING (Lexing.lexeme lexbuf) }
-  | var         { VAR (Lexing.lexeme lexbuf) }
-  | "/*"        { read_comment lexbuf }
-  | _           { raise (Syntax_error ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
-  | eof         { EOF }
+  | white        { read lexbuf }
+  | newline      { read lexbuf }
+  | ":="         { DEFEQ }
+  | '.'          { PERIOD }
+  | ';'          { SEMICOLON }
+  | ':'          { COLON }
+  | ','          { COMMA }
+  | '+'          { PLUS }
+  | '-'          { MINUS }
+  | '*'          { TIMES }
+  | '/'          { DIVIDE }
+  | '='          { EQUAL }
+  | '>'          { GT }
+  | '<'          { LT }
+  | ">="         { EGT }
+  | "<="         { ELT }
+  | "in"         { IN }
+  | '!'          { NOT }
+  | "&&"         { LOG_AND }
+  | "||"         { LOG_OR }
+  | '('          { LPAREN }
+  | ')'          { RPAREN }
+  | '{'          { LBRACE }
+  | '}'          { RBRACE }
+  | '['          { LBRACK }
+  | ']'          { RBRACK }
+  | "if"         { IF }
+  | "else"       { ELSE }
+  | "while"      { WHILE }
+  | "return"     { RETURN }
+  | "function"   { FUNCTION }
+  | "delete"     { DELETE }
+  | "undefined"  { UNDEFINED }
+  | "typeof"     { TYPEOF }
+  | "__$int"     { INT_TYPE }
+  | "__$float"   { FLT_TYPE }
+  | "__$string"  { STR_TYPE }
+  | "__$boolean" { BOOL_TYPE }
+  | int          { INT (int_of_string (Lexing.lexeme lexbuf)) }
+  | float        { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
+  | bool         { BOOLEAN (bool_of_string (Lexing.lexeme lexbuf)) }
+  | string       { STRING (Lexing.lexeme lexbuf) }
+  | var          { VAR (Lexing.lexeme lexbuf) }
+  | "/*"         { read_comment lexbuf }
+  | _            { raise (Syntax_error ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
+  | eof          { EOF }
 
 and read_comment =
 (* Read comments *)
