@@ -626,15 +626,25 @@ function DefaultValue (O, hint) {
 
 
 function main () {
-  loc1 := { };
-  loc2 := NewPropertyDescriptor();
+  /* Test Property Descriptor type and respective operations (see 8.10). */
+  testPropertyDescriptor();
+
+  /* Test Object internal methods (see 8.12) */
+  testObjectInternalMethods();
+
+  return
+};
+
+function testPropertyDescriptor() {
+  loc1:= {};
+  loc2:= NewPropertyDescriptor();
 
   loc1.accessor := IsAccessorPropertyDescriptor(loc2);
   loc1.data := IsDataPropertyDescriptor(loc2);
   loc1.generic := IsGenericPropertyDescriptor(loc2);
 
-  loc3 := { };
-  loc4 := NewPropertyDescriptor();
+  loc3:= {};
+  loc4:= NewPropertyDescriptor();
   loc4.Set := { };
   loc4.Get := { };
 
@@ -642,8 +652,8 @@ function main () {
   loc3.data := IsDataPropertyDescriptor(loc4);
   loc3.generic := IsGenericPropertyDescriptor(loc4);
 
-  loc7 := { };
-  loc8 := NewPropertyDescriptor();
+  loc7:= {};
+  loc8:= NewPropertyDescriptor();
   loc8.Value := 123;
   loc8.Writable := false;
 
@@ -651,9 +661,12 @@ function main () {
   loc7.data := IsDataPropertyDescriptor(loc8);
   loc7.generic := IsGenericPropertyDescriptor(loc8);
 
+  return
+};
 
-  loc9 := {};
-  loc10 := {
+function testObjectInternalMethods() {
+  loc9:= {};
+  loc10:= {
     genericProp: {
       Configurable: false,
       Enumerable: false
@@ -663,8 +676,8 @@ function main () {
       Writable: true
     },
     accessorProp: {
-      Get: { },
-      Set: { },
+      Get: {},
+      Set: {},
       Enumerable: true,
       Configurable: true
     }
@@ -674,5 +687,5 @@ function main () {
   loc9.data := GetOwnProperty(loc10, "dataProp");
   loc9.generic := GetOwnProperty(loc10, "genericProp");
 
-  return undefined
+  return
 }
