@@ -537,7 +537,7 @@ function Delete (O, P, Throw) {
   }
   /** 4. Else if Throw, then throw a TypeError exception. */
   else if (Throw) {
-    return TypeErrorException();
+    return TypeErrorException()
   };
 
   /** 5. Return false. */
@@ -612,7 +612,7 @@ function DefaultValue (O, hint) {
     };
 
     /** 5. Throw a TypeError exception. */
-    return TypeErrorException();
+    return TypeErrorException()
   };
 
 /** When the [[DefaultValue]] internal method of O is called with no hint, then it behaves as if the hint were Number,
