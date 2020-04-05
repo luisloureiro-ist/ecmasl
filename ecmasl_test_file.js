@@ -669,7 +669,7 @@ function testPropertyDescriptor() {
 
 function testObjectInternalMethods() {
   loc9  := {};
-  loc10 := {
+  loc14 := {
     dataProp: {
       Value: "data",
       Writable: true,
@@ -684,8 +684,8 @@ function testObjectInternalMethods() {
     }
   };
 
-  loc9.accessor := GetOwnProperty(loc10, "accessorProp");
-  loc9.data     := GetOwnProperty(loc10, "dataProp");
+  loc9.accessor := GetOwnProperty(loc14, "accessorProp");
+  loc9.data     := GetOwnProperty(loc14, "dataProp");
 
   return
 }
