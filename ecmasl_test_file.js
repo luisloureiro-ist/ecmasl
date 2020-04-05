@@ -582,7 +582,7 @@ function DefaultValue (O, hint) {
     return TypeErrorException()
   }
   /** When the [[DefaultValue]] internal method of O is called with hint Number, the following steps are taken: */
-  else if (typeof hint = __$int || typeof hint = __$float) {
+  else if (typeof hint = __$int || typeof hint = __$float || hint = undefined) {
     /** 1. Let valueOf be the result of calling the [[Get]] internal method of object O with argument "valueOf". */
     valueOf := Get(O, "valueOf");
 
