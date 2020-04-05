@@ -4,6 +4,7 @@ type t =
   | Bool  of bool
   | Str   of string
   | Loc   of Loc.t
+  | List  of t list
   | Type  of Type.t
   | Void
   | Undef
@@ -14,6 +15,7 @@ let neg (v : t) : t = match v with
   | Bool v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to boolean type argument"
   | Str v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to string type argument"
   | Loc v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Loc type argument"
+  | List v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to List type argument"
   | Type v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Type type argument"
   | Undef  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to undefined type argument"
   | Void   -> invalid_arg "Exception in Val.neg: this operation doesn't apply to void type argument"
@@ -81,12 +83,13 @@ let typeof (v : t) : t = match v with
   | Type v -> invalid_arg "Exception in Val.typeof: not implemented for Type type argument"
   | _      -> invalid_arg "Exception in Val.typeof: invalid argument"
 
-let str (v : t) : string = match v with
-  | Flt v  -> string_of_float v
-  | Int v  -> string_of_int v
-  | Bool v -> string_of_bool v
-  | Str v  -> "\"" ^ v ^ "\""
-  | Loc v  -> Loc.str v
-  | Type v -> Type.str v
-  | Undef  -> "undefined"
-  | Void   -> ""
+let rec str (v : t) : string = match v with
+  | Flt v   -> string_of_float v
+  | Int v   -> string_of_int v
+  | Bool v  -> string_of_bool v
+  | Str v   -> "\"" ^ v ^ "\""
+  | Loc v   -> Loc.str v
+  | List vs -> "[" ^ List.fold_left (fun acc v -> (if acc <> "" then acc ^ ", " else acc) ^ str v) "" vs ^ "]"
+  | Type v  -> Type.str v
+  | Undef   -> "undefined"
+  | Void    -> ""

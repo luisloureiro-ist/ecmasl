@@ -30,11 +30,15 @@ let eval_binopt_expr (heap : Heap.t) (op : Expr.bopt) (v1 : Val.t) (v2 : Val.t) 
   | Log_Or  -> Val.log_or (v1, v2)
   | InObj   -> eval_inobj_expr heap v1 v2
 
+let eval_nopt_expr (op : Expr.nopt) (vals : Val.t list) : Val.t = match op with
+  | ListExpr -> Val.List vals
+
 let rec eval_expr (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : Expr.t) : Val.t = match e with
   | Val n                -> n
   | Var x                -> Store.get sto x
   | UnOpt (uop, e)       -> let v = eval_expr prog heap sto e in eval_unopt_expr uop v
   | BinOpt (bop, e1, e2) -> let v1 = eval_expr prog heap sto e1 and v2 = eval_expr prog heap sto e2 in eval_binopt_expr heap bop v1 v2
+  | NOpt (nop, es)       -> eval_nopt_expr nop (List.map (eval_expr prog heap sto) es)
   | Call (f, es)         -> eval_call_expr prog heap sto f es
   | NewObj (fes)         -> let obj = Object.create() in add_fields_to obj fes (eval_expr prog heap sto); Loc (Heap.insert heap obj)
   | Access (e, f)        -> eval_access_expr prog heap sto e f

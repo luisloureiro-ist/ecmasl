@@ -106,10 +106,12 @@ val_target:
   | t = type_target;
     { Val.Type t }
 
-(* e ::= {} | {f:e} | e.f | e[f] | v | x | -e | e+e | f(e) | (e) *)
+(* e ::= {} | {f:e} | [] | [e] | e.f | e[f] | v | x | -e | e+e | f(e) | (e) *)
 expr_target:
   | LBRACE; fes = separated_list (COMMA, fv_target); RBRACE;
     { Expr.NewObj (fes) }
+  | LBRACK; es = separated_list (COMMA, expr_target); RBRACK;
+    { Expr.NOpt (Expr.ListExpr, es) }
   | e = expr_target; PERIOD; f = VAR;
     { Expr.Access (e, Expr.Val (Str f)) }
   | e = expr_target; LBRACK; f = expr_target; RBRACK;

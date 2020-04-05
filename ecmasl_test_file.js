@@ -570,7 +570,7 @@ function DefaultValue (O, hint) {
     /** 4. If IsCallable(valueOf) is true then: */
     if (IsCallable(valueOf)) {
       /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
-      val := Call(valueOf, O, "");
+      val := Call(valueOf, O, []);
 
       /** b. If val is a primitive value, return val. */
       if (IsPrimitiveValue(val)) {
@@ -589,7 +589,7 @@ function DefaultValue (O, hint) {
     /** 2. If IsCallable(valueOf) is true then: */
     if (IsCallable(valueOf)) {
       /** a. Let val be the result of calling the [[Call]] internal method of valueOf, with O as the this value and an empty argument list. */
-      val := Call(valueOf, O, "");
+      val := Call(valueOf, O, []);
 
       /** b. If val is a primitive value, return val. */
       if (IsPrimitiveValue(val)) {
@@ -603,7 +603,7 @@ function DefaultValue (O, hint) {
     /** 4. If IsCallable(toString) is true then: */
     if (IsCallable(toString)) {
       /** a. Let str be the result of calling the [[Call]] internal method of toString, with O as the this value and an empty argument list. */
-      str := Call(toString, O, "");
+      str := Call(toString, O, []);
 
       /** b. If str is a primitive value, return str. */
       if (IsPrimitiveValue(str)) {
