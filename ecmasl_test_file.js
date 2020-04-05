@@ -653,20 +653,16 @@ function main () {
 
 
   loc9 := {};
-  propGeneric := "generic";
-  propData := "data";
-  propAccessor := "accessor";
-
-  loc8 := {
-    generic: {
+  loc10 := {
+    genericProp: {
       Configurable: false,
       Enumerable: false
     },
-    data: {
+    dataProp: {
       Value: "data",
       Writable: true
     },
-    accessor: {
+    accessorProp: {
       Get: { },
       Set: { },
       Enumerable: true,
@@ -674,9 +670,9 @@ function main () {
     }
   };
 
-  loc9.accessor := GetOwnProperty(loc8, propAccessor);
-  loc9.data := GetOwnProperty(loc8, propData);
-  loc9.generic := GetOwnProperty(loc8, propGeneric);
+  loc9.accessor := GetOwnProperty(loc10, "accessorProp");
+  loc9.data := GetOwnProperty(loc10, "dataProp");
+  loc9.generic := GetOwnProperty(loc10, "genericProp");
 
   return undefined
 }
