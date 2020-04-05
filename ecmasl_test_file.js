@@ -625,17 +625,25 @@ function DefaultValue (O, hint) {
 };
 
 
-function main () {
-  /* Test Property Descriptor type and respective operations (see 8.10). */
-  testPropertyDescriptor();
 
-  /* Test Object internal methods (see 8.12) */
-  testObjectInternalMethods();
+/**
+ * BEGIN
+ *
+
+/**
+ * BEGIN: Test functions
+ */
+
+/**
+ * BEGIN: Test functions for the abstract operations defined in the section 8.10
+ */
+function testPropertyDescriptor() {
+  testIsAccessorIsDataIsGenericPropertyDescriptorOperations();
 
   return
 };
 
-function testPropertyDescriptor() {
+function testIsAccessorIsDataIsGenericPropertyDescriptorOperations() {
   loc1 := {};
   loc2 := NewPropertyDescriptor();
 
@@ -666,9 +674,21 @@ function testPropertyDescriptor() {
 
   return
 };
+/**
+ * END: Test functions for the abstract operations defined in the section 8.10
+ */
 
+/**
+ * BEGIN: Test functions for the Object internal methods defined in section 8.12
+ */
 function testObjectInternalMethods() {
-  loc9  := {};
+  testGetOwnProperty();
+
+  return
+};
+
+function testGetOwnProperty() {
+  loc9 := {};
   loc14 := {
     dataProp: {
       Value: "data",
@@ -686,6 +706,23 @@ function testObjectInternalMethods() {
 
   loc9.accessor := GetOwnProperty(loc14, "accessorProp");
   loc9.data     := GetOwnProperty(loc14, "dataProp");
+
+  return
+};
+/**
+ * END: Test functions for the Object internal methods defined in section 8.12
+ */
+
+/**
+ * END: Test functions
+ */
+
+function main() {
+  /* Test Property Descriptor type and respective operations (see 8.10). */
+  testPropertyDescriptor();
+
+  /* Test Object internal methods (see 8.12) */
+  testObjectInternalMethods();
 
   return
 }
