@@ -6,7 +6,7 @@ type t = Skip
        | If          of (Expr.t option * t) list
        | While       of Expr.t * t
        | Return      of Expr.t
-       | FieldAssign of Expr.t * Field.t * Expr.t
+       | FieldAssign of Expr.t * Expr.t * Expr.t
        | FieldDelete of Expr.t * Expr.t
        | ExprStmt    of Expr.t
 
@@ -17,7 +17,7 @@ let rec str (stmt : t) : string = match stmt with
   | If (exps_stmts)           -> List.fold_left (fun strng e_s -> (if strng <> "" then strng ^ " else " else strng) ^ build_ifelse e_s) "" exps_stmts
   | While (exp, s)            -> "while (" ^ (Expr.str exp) ^ ") { " ^ (str s) ^ " }"
   | Return exp                -> "return " ^ (Expr.str exp) ^ ";"
-  | FieldAssign (e_o, f, e_v) -> Expr.str e_o ^ "." ^ Field.str f ^ " = " ^ Expr.str e_v
+  | FieldAssign (e_o, f, e_v) -> Expr.str e_o ^ "[" ^ Expr.str f ^ "] = " ^ Expr.str e_v
   | FieldDelete (e, f)        -> "delete " ^ Expr.str e ^ "[" ^ Expr.str f ^ "]"
   | ExprStmt e                -> Expr.str e
 

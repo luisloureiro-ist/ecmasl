@@ -140,6 +140,8 @@ fv_target:
 (* s ::= e.f := e | delete e.f | skip | x := e | s1; s2 | if (e) { s1 } else { s2 } | while (e) { s } | return e | return *)
 stmt_target:
   | e1 = expr_target; PERIOD; f = VAR; DEFEQ; e2 = expr_target;
+    { Stmt.FieldAssign (e1, Expr.Val (Str f), e2) }
+  | e1 = expr_target; LBRACK; f = expr_target; RBRACK; DEFEQ; e2 = expr_target;
     { Stmt.FieldAssign (e1, f, e2) }
   | DELETE; e = expr_target; PERIOD; f = VAR;
     { Stmt.FieldDelete (e, Expr.Val (Str f)) }

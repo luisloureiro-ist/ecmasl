@@ -79,14 +79,7 @@ and eval_stmt (prog : Prog.t) (heap : Heap.t) (sto: Store.t) (s: Stmt.t) : Val.t
   | If (exps_stmts)           -> eval_if_stmt prog heap sto exps_stmts
   | While (e, s)              -> eval_stmt prog heap sto (If ([Some e, Seq (s, While (e, s))]))
   | Return exp                -> let v = eval_expr prog heap sto exp in Some v
-  | FieldAssign (e_o, f, e_v) -> (let (loc : Loc.t) =
-                                    (let loc = eval_expr prog heap sto e_o in
-                                     match loc with
-                                     | Loc l -> l
-                                     | _ -> invalid_arg "Exception in Interpreter.eval_stmt | FieldAssign : \"e_o\" is not a Loc value") in
-                                  let v = eval_expr prog heap sto e_v in
-                                  Heap.set_field heap loc f v; None
-                                 )
+  | FieldAssign (e_o, f, e_v) -> eval_fieldassign_stmt prog heap sto e_o f e_v
   | FieldDelete (e, f)        -> eval_fielddelete_stmt prog heap sto e f
   | ExprStmt e                -> ignore (eval_expr prog heap sto e); None
 
@@ -109,6 +102,16 @@ and eval_fielddelete_stmt (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e : E
       | Str field -> field
       | _         -> invalid_arg "Exception in Interpreter.eval_fielddelete_stmt : \"f\" didn't evaluate to Str") in
   Heap.delete_field heap loc' field'; None
+
+and eval_fieldassign_stmt (prog : Prog.t) (heap : Heap.t) (sto : Store.t) (e_o : Expr.t) (f : Expr.t) (e_v : Expr.t) : Val.t option =
+  let loc = eval_expr prog heap sto e_o and field = eval_expr prog heap sto f and v = eval_expr prog heap sto e_v in
+  let loc' = (match loc with
+      | Loc loc -> loc
+      | _       -> invalid_arg "Exception in Interpreter.eval_fieldassign_stmt : \"e_o\" is not a Loc value") in
+  let field' = (match field with
+      | Str field -> field
+      | _         -> invalid_arg "Exception in Interpreter.eval_fieldassign_stmt : \"f\" didn't evaluate to Str") in
+  Heap.set_field heap loc' field' v; None
 
 and eval_proc (prog : Prog.t) (heap : Heap.t) (pname : string) (args : Val.t list) : Val.t * Store.t =
   let func = Prog.get_func prog pname in
