@@ -969,24 +969,32 @@ function testObjectInternalMethods() {
 };
 
 function testGetOwnProperty() {
-  loc9 := {};
-  loc14 := {
-    dataProp: {
-      Value: "data",
-      Writable: true,
-      Configurable: false,
-      Enumerable: false
-    },
-    accessorProp: {
-      Get: {},
-      Set: {},
-      Enumerable: true,
-      Configurable: true
+  loc := {
+    testGetOwnProperty: {
+      result: {},
+      obj: {
+        dataPropDesc: {
+          Value: "data",
+          Writable: true,
+          Configurable: false,
+          Enumerable: false
+        },
+        accessorPropDesc: {
+          Get: {},
+          Set: {},
+          Enumerable: true,
+          Configurable: true
+        }
+      }
     }
   };
 
-  loc9.accessor := GetOwnProperty(loc14, "accessorProp");
-  loc9.data     := GetOwnProperty(loc14, "dataProp");
+  /* Test 1: property not in object */
+  loc.testGetOwnProperty.result.shouldBeUndefinedIfPropertyNotInObj := GetOwnProperty(loc.testGetOwnProperty.obj, "inexistentPropDesc");
+  /* Test 2..8: property is "accessorPropDesc" */
+  loc.testGetOwnProperty.result.shouldGetAccessorPropDesc := GetOwnProperty(loc.testGetOwnProperty.obj, "accessorPropDesc");
+  /* Test 2..8: property is "dataPropDesc" */
+  loc.testGetOwnProperty.result.shouldGetDataPropDesc := GetOwnProperty(loc.testGetOwnProperty.obj, "dataPropDesc");
 
   return
 };
