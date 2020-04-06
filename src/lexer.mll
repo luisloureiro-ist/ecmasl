@@ -76,6 +76,7 @@ rule read =
   | "function"   { FUNCTION }
   | "delete"     { DELETE }
   | "undefined"  { UNDEFINED }
+  | "null"       { NULL }
   | "typeof"     { TYPEOF }
   | "__$int"     { INT_TYPE }
   | "__$float"   { FLT_TYPE }

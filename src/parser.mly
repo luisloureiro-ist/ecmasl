@@ -11,6 +11,7 @@
 %token IF ELSE
 %token RETURN
 %token UNDEFINED
+%token NULL
 %token FUNCTION
 %token LPAREN RPAREN
 %token LBRACE RBRACE
@@ -93,6 +94,8 @@ type_target:
 val_target:
   | UNDEFINED;
     { Val.Undef }
+  | NULL;
+    { Val.Null }
   | f = FLOAT;
     { Val.Flt f }
   | i = INT;

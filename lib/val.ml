@@ -8,6 +8,7 @@ type t =
   | Type  of Type.t
   | Void
   | Undef
+  | Null
 
 let neg (v : t) : t = match v with
   | Flt v  -> Flt (-.v)
@@ -17,8 +18,9 @@ let neg (v : t) : t = match v with
   | Loc v  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Loc type argument"
   | List v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to List type argument"
   | Type v -> invalid_arg "Exception in Val.neg: this operation doesn't apply to Type type argument"
-  | Undef  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to undefined type argument"
   | Void   -> invalid_arg "Exception in Val.neg: this operation doesn't apply to void type argument"
+  | Undef  -> invalid_arg "Exception in Val.neg: this operation doesn't apply to undefined type argument"
+  | Null   -> invalid_arg "Exception in Val.neg: this operation doesn't apply to null type argument"
 
 let not (v : t) : t = match v with
   | Bool v -> Bool (v = false)
@@ -91,5 +93,6 @@ let rec str (v : t) : string = match v with
   | Loc v   -> Loc.str v
   | List vs -> "[" ^ List.fold_left (fun acc v -> (if acc <> "" then acc ^ ", " else acc) ^ str v) "" vs ^ "]"
   | Type v  -> Type.str v
-  | Undef   -> "undefined"
   | Void    -> ""
+  | Undef   -> "undefined"
+  | Null    -> "null"
