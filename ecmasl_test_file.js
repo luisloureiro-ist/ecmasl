@@ -964,6 +964,7 @@ function testFromPropertyDescriptor() {
 function testObjectInternalMethods() {
   testGetOwnProperty();
   testGetProperty();
+  testHasProperty();
 
   return
 };
@@ -1032,7 +1033,38 @@ function testGetProperty() {
   /* Testing 4: obj has no Prototype */
   loc.testGetProperty.result.shouldBeUndefined := GetProperty(loc.testGetProperty.objNoProto, "inexistentProperty");
   /* Testing 5: property exists in prototype */
-  loc.testGetProperty.result.shouldGetPropertyOfObjPrototype := GetProperty(loc.testGetProperty.objWithProto, "prototypeProperty");
+
+  return
+};
+
+function testHasProperty() {
+  loc := {
+    testHasProperty: {
+      result: {},
+      obj: {
+        Prototype: {
+          Prototype: null,
+          property: {
+            Value: "property",
+            Writable: true,
+            Enumerable: false,
+            Configurable: true
+          }
+        },
+        prop: {
+          Configurable: false,
+          Enumerable: false
+        }
+      }
+    }
+  };
+
+  /* Test 1 and 2: Property is not found in obj nor in its prototype */
+  loc.testHasProperty.result.shouldBeFalseWhenObjHasNoProperty :=
+    HasProperty(loc.testHasProperty.obj, "inexistentProperty");
+  /* Test 1 and 3: Property is found in obj */
+  loc.testHasProperty.result.shouldBeTrueWhenObjHasProperty :=
+    HasProperty(loc.testHasProperty.obj, "property");
 
   return
 };
