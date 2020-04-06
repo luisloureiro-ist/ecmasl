@@ -891,6 +891,7 @@ function testIsAccessorIsDataIsGenericPropertyDescriptorOperations() {
  */
 function testObjectInternalMethods() {
   testGetOwnProperty();
+  testGetProperty();
 
   return
 };
@@ -914,6 +915,44 @@ function testGetOwnProperty() {
 
   loc9.accessor := GetOwnProperty(loc14, "accessorProp");
   loc9.data     := GetOwnProperty(loc14, "dataProp");
+
+  return
+};
+
+function testGetProperty() {
+  loc := {
+    testGetProperty: {
+      result: {},
+      objNoProto: {
+        Prototype: null,
+        ownProperty: {
+          Value: "Own property",
+          Writable: false,
+          Enumerable: true,
+          Configurable: false
+        }
+      },
+      objWithProto: {
+        Prototype: {
+          Prototype: {
+            prototypeProperty: {
+              Value: "Prototype property",
+              Writable: true,
+              Enumerable: false,
+              Configurable: true
+            }
+          }
+        }
+      }
+    }
+  };
+
+  /* Testing 2: property exists in obj */
+  loc.testGetProperty.result.shouldGetOwnPropertyOfObj := GetProperty(loc.testGetProperty.objNoProto, "ownProperty");
+  /* Testing 4: obj has no Prototype */
+  loc.testGetProperty.result.shouldBeUndefined := GetProperty(loc.testGetProperty.objNoProto, "inexistentProperty");
+  /* Testing 5: property exists in prototype */
+  loc.testGetProperty.result.shouldGetPropertyOfObjPrototype := GetProperty(loc.testGetProperty.objWithProto, "prototypeProperty");
 
   return
 };
