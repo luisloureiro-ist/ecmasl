@@ -965,6 +965,7 @@ function testObjectInternalMethods() {
   testGetOwnProperty();
   testGetProperty();
   testHasProperty();
+  testDelete();
 
   return
 };
@@ -1065,6 +1066,42 @@ function testHasProperty() {
   /* Test 1 and 3: Property is found in obj */
   loc.testHasProperty.result.shouldBeTrueWhenObjHasProperty :=
     HasProperty(loc.testHasProperty.obj, "property");
+
+  return
+};
+
+function testDelete() {
+  loc := {
+    testDelete: {
+      result:{},
+      obj: {
+        property: {
+          Value: "Can't be deleted!",
+          Writable: true,
+          Enumerable: true,
+          Configurable: false
+        },
+        propertyToDelete: {
+          Value: "Can be deleted!",
+          Writable: false,
+          Enumerable: false,
+          Configurable: true
+        }
+      }
+    }
+  };
+
+  /* Test 2: Prototype is not found in object */
+  loc.testDelete.result.shouldBeTrueWhenObjHasNoProperty :=
+    Delete(loc.testDelete.obj, "inexistentProperty", false);
+  /* Test 4 and 5: Prototype is found in object but it's not configurable */
+  loc.testDelete.result.shouldBeFalseWhenPropertyIsNotConfigurable :=
+    Delete(loc.testDelete.obj, "property", false);
+  loc.testDelete.result.shouldThrowExceptionWhenPropertyIsNotConfigurableAndThrowIsTrue :=
+    Delete(loc.testDelete.obj, "property", true);
+  /* Test 3: Property is found in object and it's configurable */
+  loc.testDelete.result.shouldBeTrueWhenPropertyIsRemoved :=
+    Delete(loc.testDelete.obj, "propertyToDelete", true);
 
   return
 };
