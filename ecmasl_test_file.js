@@ -846,39 +846,111 @@ function DefineOwnProperty(O, P, Desc, Throw) {
  * BEGIN: Test functions for the abstract operations defined in the section 8.10
  */
 function testPropertyDescriptor() {
-  testIsAccessorIsDataIsGenericPropertyDescriptorOperations();
+  testIsAccessorPropertyDescriptor();
+  testIsDataPropertyDescriptor();
+  testIsGenericPropertyDescriptor();
+  testFromPropertyDescriptor();
 
   return
 };
 
-function testIsAccessorIsDataIsGenericPropertyDescriptorOperations() {
-  loc1 := {};
-  loc2 := NewPropertyDescriptor();
+function testIsAccessorPropertyDescriptor() {
+  loc := {
+    testIsAccessorPropertyDescriptor: {
+      result: {},
+      accessorNoGetPropDesc: NewPropertyDescriptor(),
+      accessorNoSetPropDesc: NewPropertyDescriptor(),
+      accessorPropDesc: NewPropertyDescriptor(),
+      genericPropDesc: NewPropertyDescriptor()
+    }
+  };
 
-  /* loc1 must be generic */
-  loc1.accessor := IsAccessorPropertyDescriptor(loc2);
-  loc1.data     := IsDataPropertyDescriptor(loc2);
-  loc1.generic  := IsGenericPropertyDescriptor(loc2);
+  loc.testIsAccessorPropertyDescriptor.accessorPropDesc.Set := { };
+  loc.testIsAccessorPropertyDescriptor.accessorPropDesc.Get := { };
 
-  loc3 := {};
-  loc4 := NewPropertyDescriptor();
-  loc4.Set := { };
-  loc4.Get := { };
+  loc.testIsAccessorPropertyDescriptor.accessorNoGetPropDesc.Set := { };
 
-  /* loc3 must be accessor */
-  loc3.accessor := IsAccessorPropertyDescriptor(loc4);
-  loc3.data     := IsDataPropertyDescriptor(loc4);
-  loc3.generic  := IsGenericPropertyDescriptor(loc4);
+  loc.testIsAccessorPropertyDescriptor.accessorNoSetPropDesc.Get := { };
 
-  loc7 := {};
-  loc8 := NewPropertyDescriptor();
-  loc8.Value := 123;
-  loc8.Writable := false;
+  /* Test 1: property descriptor is undefined */
+  loc.testIsAccessorPropertyDescriptor.result.shouldBeFalseIfDescUndefined := IsAccessorPropertyDescriptor(undefined);
+  /* Test 2: Get and/or Set are absent */
+  loc.testIsAccessorPropertyDescriptor.result.shouldBeTrueIfGetIsAbsent := IsAccessorPropertyDescriptor(loc.testIsAccessorPropertyDescriptor.accessorNoGetPropDesc);
+  loc.testIsAccessorPropertyDescriptor.result.shouldBeTrueIfSetIsAbsent := IsAccessorPropertyDescriptor(loc.testIsAccessorPropertyDescriptor.accessorNoSetPropDesc);
+  loc.testIsAccessorPropertyDescriptor.result.shouldBeFalseIfBothAreAbsent := IsAccessorPropertyDescriptor(loc.testIsAccessorPropertyDescriptor.genericPropDesc);
+  /* Test 3: property descriptor has both fields */
+  loc.testIsAccessorPropertyDescriptor.result.shouldBeTrueWhenBothPresent := IsAccessorPropertyDescriptor(loc.testIsAccessorPropertyDescriptor.accessorPropDesc);
 
-  /* loc7 must be data */
-  loc7.accessor := IsAccessorPropertyDescriptor(loc8);
-  loc7.data     := IsDataPropertyDescriptor(loc8);
-  loc7.generic  := IsGenericPropertyDescriptor(loc8);
+  return
+};
+
+function testIsDataPropertyDescriptor() {
+  loc := {
+    testIsDataPropertyDescriptor: {
+      result: {},
+      dataNoWritablePropDesc: NewPropertyDescriptor(),
+      dataNoValuePropDesc: NewPropertyDescriptor(),
+      dataPropDesc: NewPropertyDescriptor(),
+      genericPropDesc: NewPropertyDescriptor()
+    }
+  };
+
+  loc.testIsDataPropertyDescriptor.dataPropDesc.Value := 123;
+  loc.testIsDataPropertyDescriptor.dataPropDesc.Writable := false;
+
+  loc.testIsDataPropertyDescriptor.dataNoWritablePropDesc.Value := 456;
+
+  loc.testIsDataPropertyDescriptor.dataNoValuePropDesc.Writable := true;
+
+  /* Test 1: property descriptor is undefined */
+  loc.testIsDataPropertyDescriptor.result.shouldBeFalseIfDescUndefined := IsDataPropertyDescriptor(undefined);
+  /* Test 2: Value and/or Writable are absent */
+  loc.testIsDataPropertyDescriptor.result.shouldBeTrueIfWritableIsAbsent := IsDataPropertyDescriptor(loc.testIsDataPropertyDescriptor.dataNoWritablePropDesc);
+  loc.testIsDataPropertyDescriptor.result.shouldBeTrueIfValueIsAbsent := IsDataPropertyDescriptor(loc.testIsDataPropertyDescriptor.dataNoValuePropDesc);
+  loc.testIsDataPropertyDescriptor.result.shouldBeFalseIfBothAreAbsent := IsDataPropertyDescriptor(loc.testIsDataPropertyDescriptor.genericPropDesc);
+  /* Test 3: property descriptor has both fields */
+  loc.testIsDataPropertyDescriptor.result.shouldBeTrueWhenBothPresent := IsDataPropertyDescriptor(loc.testIsDataPropertyDescriptor.dataPropDesc);
+
+  return
+};
+
+function testIsGenericPropertyDescriptor() {
+  loc := {
+    testIsGenericPropertyDescriptor: {
+      result: {},
+      genericPropDesc: NewPropertyDescriptor(),
+      accessorPropDesc: NewPropertyDescriptor(),
+      dataPropDesc: NewPropertyDescriptor()
+    }
+  };
+
+  loc.testIsGenericPropertyDescriptor.dataPropDesc.Value := 123;
+  loc.testIsGenericPropertyDescriptor.dataPropDesc.Writable := false;
+
+  loc.testIsGenericPropertyDescriptor.accessorPropDesc.Set := { };
+  loc.testIsGenericPropertyDescriptor.accessorPropDesc.Get := { };
+
+  /* Test 1: property descriptor is undefined */
+  loc.testIsGenericPropertyDescriptor.result.shouldBeFalseIfDescUndefined := IsGenericPropertyDescriptor(undefined);
+  /* Test 2: property descriptor is neither accessor nor data */
+  loc.testIsGenericPropertyDescriptor.result.shouldBeTrueIfNeitherAccessorNorData := IsGenericPropertyDescriptor(loc.testIsGenericPropertyDescriptor.genericPropDesc);
+  /* Test 2 and 3: property descriptor is accessor */
+  loc.testIsGenericPropertyDescriptor.result.shouldBeFalseIfDescIsAccessor := IsGenericPropertyDescriptor(loc.testIsGenericPropertyDescriptor.accessorPropDesc);
+  /* Test 2 and 3: property descriptor is data */
+  loc.testIsGenericPropertyDescriptor.result.shouldBeFalseIfDescIsData := IsGenericPropertyDescriptor(loc.testIsGenericPropertyDescriptor.dataPropDesc);
+
+  return
+};
+
+function testFromPropertyDescriptor() {
+  loc := {
+    testFromPropertyDescriptor: {
+      result: {}
+    }
+  };
+
+  loc.testFromPropertyDescriptor.result.shouldBeUndefined := FromPropertyDescriptor(undefined);
+
 
   return
 };
